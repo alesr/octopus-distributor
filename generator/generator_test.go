@@ -14,7 +14,7 @@ var randomErrorCases = []struct {
 }
 
 // not possibile to test randoms, so at least let's check if error is working
-func randomTest(t *testing.T) {
+func TestRandom(t *testing.T) {
 	for _, test := range randomErrorCases {
 		_, err := random(test.arg)
 		if err != nil {
