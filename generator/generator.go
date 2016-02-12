@@ -15,8 +15,7 @@ func Messages() {
 	// the basic operations that the octopus are prepared to handle.
 	taskList := []string{"arithmetic", "fibonacci", "reverse", "encode"}
 
-	// index, err := utilities.Random(len(taskList))
-	_, err := utilities.Random(len(taskList))
+	index, err := utilities.Random(len(taskList))
 
 	if err != nil {
 		// if you are here and you don't know why, checks if taskList is empty
@@ -24,8 +23,7 @@ func Messages() {
 	}
 
 	var msg []string
-	// switch taskList[index] {
-	switch "reverse" {
+	switch taskList[index] {
 	case "arithmetic":
 		msg, err = arithmetic()
 		if err != nil {
@@ -39,6 +37,10 @@ func Messages() {
 			log.Fatal(err)
 		}
 	case "encode":
+		msg, err = encode()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	fmt.Println(msg)
 }
@@ -67,18 +69,40 @@ func fibonacci() []string {
 	return []string{"fibonacci", strconv.Itoa(n)}
 }
 
+// a reverse query
 func reverse() ([]string, error) {
 
+	txt, err := loadText()
+	if err != nil {
+		return nil, err
+	}
+
+	// our query
+	return []string{"reverse", txt}, nil
+}
+
+func encode() ([]string, error) {
+	txt, err := loadText()
+	if err != nil {
+		return nil, err
+	}
+
+	// our query
+	return []string{"encode", txt}, nil
+}
+
+func loadText() (string, error) {
 	// load file with sample text
 	content, err := utilities.LoadFile("generator/data/text.in")
 	if err != nil {
 		fmt.Println(err)
-		return nil, err
+		return "", err
 	}
 
+	// same story once again, get a rand number between zero and content length
 	index, err := utilities.Random(len(content))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return []string{"reverse", content[index]}, nil
+	return content[index], nil
 }
