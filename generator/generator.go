@@ -1,18 +1,11 @@
 package generator
 
 import (
-	"errors"
 	"fmt"
 	"log"
-	"math/rand"
 	"strconv"
-	"time"
 
 	"github.com/alesr/octopus-distributor/utilities"
-)
-
-var (
-	errRandomFuncError = errors.New("random: function expect an int arg greater than zero")
 )
 
 // Messages randomly creates elements to be sent to our dear octopus,
@@ -22,8 +15,8 @@ func Messages() {
 	// the basic operations that the octopus are prepared to handle.
 	taskList := []string{"arithmetic", "fibonacci", "reverse", "encode"}
 
-	// index, err := random(len(taskList))
-	_, err := random(len(taskList))
+	// index, err := utilities.Random(len(taskList))
+	_, err := utilities.Random(len(taskList))
 
 	if err != nil {
 		// if you are here and you don't know why, checks if taskList is empty
@@ -50,30 +43,19 @@ func Messages() {
 	fmt.Println(msg)
 }
 
-// returns a pseudo random number between zero and max
-func random(max int) (int, error) {
-	// it means that the source slice is empty.
-	if max < 0 {
-		return 0, errRandomFuncError
-	}
-
-	rand.Seed(time.Now().UTC().UnixNano())
-	return rand.Intn(max), nil
-}
-
 // builds a fake arithmetic operation
 func arithmetic() ([]string, error) {
 
 	// let's take a random value for a and b
 	maxValue := 100
-	a, _ := random(maxValue)
-	b, _ := random(maxValue)
+	a, _ := utilities.Random(maxValue)
+	b, _ := utilities.Random(maxValue)
 
 	// now a random operation
 	operationsList := []string{"add", "sub", "mult", "div"}
-	index, err := random(len(operationsList))
+	index, err := utilities.Random(len(operationsList))
 	if err != nil {
-		return nil, errRandomFuncError
+		return nil, err
 	}
 	operation := operationsList[index]
 	return []string{operation, strconv.Itoa(a), strconv.Itoa(b)}, nil
@@ -81,7 +63,7 @@ func arithmetic() ([]string, error) {
 
 // a fibonacci query
 func fibonacci() []string {
-	n, _ := random(50)
+	n, _ := utilities.Random(50)
 	return []string{"fibonacci", strconv.Itoa(n)}
 }
 
@@ -94,7 +76,7 @@ func reverse() ([]string, error) {
 		return nil, err
 	}
 
-	index, err := random(len(content))
+	index, err := utilities.Random(len(content))
 	if err != nil {
 		return nil, err
 	}
