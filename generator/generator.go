@@ -26,7 +26,15 @@ func Messages() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(taskList[index])
+	switch taskList[index] {
+	case "arithmetic":
+
+	case "fibonacci":
+	case "reverse":
+	case "encode":
+	}
+
+	fmt.Println()
 
 }
 
