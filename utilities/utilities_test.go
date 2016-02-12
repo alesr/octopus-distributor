@@ -2,12 +2,36 @@ package utilities
 
 import "testing"
 
+var randomErrorCases = []struct {
+	arg int
+	err error
+}{
+	{-2, ErrRandomFuncError},
+	{-1, ErrRandomFuncError},
+	{0, ErrRandomFuncError},
+	{1, nil},
+	{2, nil},
+}
+
+// not possibile to test randoms, so at least let's check if error is working
+func TestRandom(t *testing.T) {
+	for _, test := range randomErrorCases {
+		_, err := Random(test.arg)
+		if err != nil {
+			if err != test.err {
+				t.Error(err)
+			}
+		}
+	}
+}
+
 var checkFileTestCases = []struct {
 	filepath string
 	exist    bool
 }{
 	{"../generator/data/text.in", true},
 	{"../generator/data/text.text", false},
+	{"../data/text.text", false},
 }
 
 func TestCheckFile(t *testing.T) {
