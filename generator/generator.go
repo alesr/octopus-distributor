@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+
+	"github.com/alesr/octopus-distributor/utilities"
 )
 
 var (
@@ -20,7 +22,8 @@ func Messages() {
 	// the basic operations that the octopus are prepared to handle.
 	taskList := []string{"arithmetic", "fibonacci", "reverse", "encode"}
 
-	index, err := random(len(taskList))
+	// index, err := random(len(taskList))
+	_, err := random(len(taskList))
 
 	if err != nil {
 		// if you are here and you don't know why, checks if taskList is empty
@@ -28,7 +31,8 @@ func Messages() {
 	}
 
 	var msg []string
-	switch taskList[index] {
+	// switch taskList[index] {
+	switch "reverse" {
 	case "arithmetic":
 		msg, err = arithmetic()
 		if err != nil {
@@ -37,9 +41,12 @@ func Messages() {
 	case "fibonacci":
 		msg = fibonacci()
 	case "reverse":
+		msg, err = reverse()
+		if err != nil {
+			log.Fatal(err)
+		}
 	case "encode":
 	}
-
 	fmt.Println(msg)
 }
 
@@ -72,8 +79,24 @@ func arithmetic() ([]string, error) {
 	return []string{operation, strconv.Itoa(a), strconv.Itoa(b)}, nil
 }
 
-// a fibonacci operation
+// a fibonacci query
 func fibonacci() []string {
 	n, _ := random(50)
 	return []string{"fibonacci", strconv.Itoa(n)}
+}
+
+func reverse() ([]string, error) {
+
+	// load file with sample text
+	content, err := utilities.LoadFile("generator/data/text.in")
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	index, err := random(len(content))
+	if err != nil {
+		return nil, err
+	}
+	return []string{"reverse", content[index]}, nil
 }
