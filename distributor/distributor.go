@@ -40,5 +40,10 @@ func identifier(id int, req []string) {
 		key := fmt.Sprintf("arg %s", strconv.Itoa(i+1))
 		request[key] = arg
 	}
-	fmt.Println(request)
+	dealer(request)
+}
+
+// now, depending on the request type we'll distribute it to the right function
+func dealer(request map[string]string) {
+
 }
