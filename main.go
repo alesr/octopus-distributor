@@ -8,16 +8,13 @@ import (
 
 func main() {
 
-	// creates a channel for requests
-	// these requests going to be sent by a hyp
 	requestCh := make(chan []string)
-	go generator.Messenger(requestCh)
+	doneCh := make(chan bool)
+	go generator.GetRequest(requestCh, doneCh)
 
 	for i := 0; i < 10; i++ {
-		select {
-		case msg := <-requestCh:
-			fmt.Println(msg)
-		}
+		fmt.Println(<-requestCh)
 	}
-
+	doneCh <- true
+	close(doneCh)
 }
