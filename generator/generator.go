@@ -47,52 +47,72 @@ func init() {
 	content = txt
 }
 
-// Messenger randomly chooses a message type and call the proper function to build this message.
+// GetRequest call messenger() to delivery some message
+// and send it over the request channel
+func GetRequest(requestCh chan []string, doneCh chan bool) {
+
+	// the default behaviour is to send messages to request	channel.
+	// as soon we receive from done channel, we return the function
+	// and the channel can be safely closed by the caller
+	go func() {
+		for {
+			select {
+			case <-doneCh:
+				return
+			default:
+				msg, err := messenger()
+				if err != nil {
+					log.Fatal(err)
+				}
+				requestCh <- msg
+			}
+		}
+	}()
+}
+
+// messenger randomly chooses a message type and call the proper function to build this message.
 // After that, sends the message to our dear octopus.
-func Messenger(requestCh chan []string) {
+func messenger() ([]string, error) {
 
 	// the basic operations that the octopus are prepared to handle.
 	taskList := []string{"arithmetic", "fibonacci", "reverse", "encode"}
 
-	for {
-		// choose a random index inside taskList
-		index, err := utilities.Random(len(taskList))
-		if err != nil {
-			// if you are here and you don't know why, checks if taskList is empty
-			log.Fatal(err)
-		}
-
-		// holds the message to be sent
-		var msg []string
-
-		// depending on what task as choose we call the right function to build the message.
-		switch taskList[index] {
-
-		case "arithmetic":
-			msg, err = arithmetic()
-			if err != nil {
-				log.Fatal(err)
-			}
-
-		case "fibonacci":
-			msg = fibonacci()
-
-		case "reverse":
-			msg, err = reverse()
-			if err != nil {
-				log.Fatal(err)
-			}
-
-		case "encode":
-			msg, err = encode()
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		// message built, send it!
-		requestCh <- msg
+	// choose a random index inside taskList
+	index, err := utilities.Random(len(taskList))
+	if err != nil {
+		// if you are here and you don't know why, checks if taskList is empty
+		log.Fatal(err)
 	}
+
+	// holds the message to be sent
+	var msg []string
+
+	// depending on which task has been chosen,
+	// we call the corresponding constructor function.
+	switch taskList[index] {
+
+	case "arithmetic":
+		msg, err = arithmetic()
+		if err != nil {
+			return nil, err
+		}
+
+	case "fibonacci":
+		msg = fibonacci()
+
+	case "reverse":
+		msg, err = reverse()
+		if err != nil {
+			return nil, err
+		}
+
+	case "encode":
+		msg, err = encode()
+		if err != nil {
+			return nil, err
+		}
+	}
+	return msg, nil
 }
 
 // builds basic arithmetic operations
