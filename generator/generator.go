@@ -1,16 +1,44 @@
 package generator
 
+/*
+To make things interesting we want a high volume of requests being sent
+to your queue manager a.k.a Octopus Distributor.
+
+For that, we need to simulate a client sending as many requests as possible.
+Meet, Generator.
+
+What the generator package does is to group functions that help us to build
+four types of fake messages that going to work as requests to our queue.
+
+The messages types are arithmetic, fibonacci, reverse and encode.
+
+After build these requests we send them randomly over a channel our octopus so he can do his  distribution.
+
+This way we should expect the channel receive messages like:
+
+[fibo 5]
+[reverse hello, world]
+[add 2 2]
+[div 4 2]
+[encode foo bar]
+[fib 10]
+*/
+
 import (
-	"fmt"
 	"log"
 	"strconv"
 
 	"github.com/alesr/octopus-distributor/utilities"
 )
 
+// On text.in inside our data folder, we have some sample strings that we going  to use
+// to form the text to be used by the reverse and encode function so build fake messages.
+// Since we don't want to load that file everytime we build a message,
+// let's do that just once on a init function and keep on a variable called content.
 var content []string
 
 func init() {
+
 	// load file with sample text
 	txt, err := utilities.LoadFile("generator/data/text.in")
 	if err != nil {
@@ -19,44 +47,55 @@ func init() {
 	content = txt
 }
 
-// Messages randomly creates elements to be sent to our dear octopus,
-// so he can distribute them to the right hands.
-func Messages() {
+// Messenger randomly chooses a message type and call the proper function to build this message.
+// After that, sends the message to our dear octopus.
+func Messenger(requestCh chan []string) {
 
 	// the basic operations that the octopus are prepared to handle.
 	taskList := []string{"arithmetic", "fibonacci", "reverse", "encode"}
 
-	index, err := utilities.Random(len(taskList))
+	for {
+		// choose a random index inside taskList
+		index, err := utilities.Random(len(taskList))
+		if err != nil {
+			// if you are here and you don't know why, checks if taskList is empty
+			log.Fatal(err)
+		}
 
-	if err != nil {
-		// if you are here and you don't know why, checks if taskList is empty
-		log.Fatal(err)
-	}
+		// holds the message to be sent
+		var msg []string
 
-	var msg []string
-	switch taskList[index] {
-	case "arithmetic":
-		msg, err = arithmetic()
-		if err != nil {
-			log.Fatal(err)
+		// depending on what task as choose we call the right function to build the message.
+		switch taskList[index] {
+
+		case "arithmetic":
+			msg, err = arithmetic()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+		case "fibonacci":
+			msg = fibonacci()
+
+		case "reverse":
+			msg, err = reverse()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+		case "encode":
+			msg, err = encode()
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
-	case "fibonacci":
-		msg = fibonacci()
-	case "reverse":
-		msg, err = reverse()
-		if err != nil {
-			log.Fatal(err)
-		}
-	case "encode":
-		msg, err = encode()
-		if err != nil {
-			log.Fatal(err)
-		}
+
+		// message built, send it!
+		requestCh <- msg
 	}
-	fmt.Println(msg)
 }
 
-// builds a fake arithmetic operation
+// builds basic arithmetic operations
 func arithmetic() ([]string, error) {
 
 	// let's take a random value for a and b
@@ -64,56 +103,47 @@ func arithmetic() ([]string, error) {
 	a, _ := utilities.Random(maxValue)
 	b, _ := utilities.Random(maxValue)
 
-	// now a random operation
+	// now we select random operation
 	operationsList := []string{"add", "sub", "mult", "div"}
 	index, err := utilities.Random(len(operationsList))
 	if err != nil {
 		return nil, err
 	}
 	operation := operationsList[index]
+
+	// message ready, expect something like [mult 3 2]
 	return []string{operation, strconv.Itoa(a), strconv.Itoa(b)}, nil
 }
 
-// a fibonacci query
+// a fibonacci message
 func fibonacci() []string {
-	n, _ := utilities.Random(50)
+	// fib 30 should be big enough for our case
+	n, _ := utilities.Random(30)
 	return []string{"fibonacci", strconv.Itoa(n)}
 }
 
 // a reverse query
 func reverse() ([]string, error) {
 
-	content, err := loadText()
+	// get a rand number between zero and content length
+	// which means a line at text.in
+	index, err := utilities.Random(len(content))
 	if err != nil {
 		return nil, err
 	}
 
-	// our query
-	return []string{"reverse", content}, nil
+	// eg.: [reverse Papa Americano]
+	return []string{"reverse", content[index]}, nil
 }
 
 func encode() ([]string, error) {
-	content, err := loadText()
+
+	// same story once again
+	index, err := utilities.Random(len(content))
 	if err != nil {
 		return nil, err
 	}
 
-	// our query
-	return []string{"encode", content}, nil
-}
-
-func loadText() (string, error) {
-	// // load file with sample text
-	// content, err := utilities.LoadFile("generator/data/text.in")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return "", err
-	// }
-
-	// same story once again, get a rand number between zero and content length
-	index, err := utilities.Random(len(content))
-	if err != nil {
-		return "", err
-	}
-	return content[index], nil
+	// eg.: [encode hello, world]
+	return []string{"encode", content[index]}, nil
 }
