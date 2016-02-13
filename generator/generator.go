@@ -8,6 +8,17 @@ import (
 	"github.com/alesr/octopus-distributor/utilities"
 )
 
+var content []string
+
+func init() {
+	// load file with sample text
+	txt, err := utilities.LoadFile("generator/data/text.in")
+	if err != nil {
+		log.Fatal(err)
+	}
+	content = txt
+}
+
 // Messages randomly creates elements to be sent to our dear octopus,
 // so he can distribute them to the right hands.
 func Messages() {
@@ -72,32 +83,32 @@ func fibonacci() []string {
 // a reverse query
 func reverse() ([]string, error) {
 
-	txt, err := loadText()
+	content, err := loadText()
 	if err != nil {
 		return nil, err
 	}
 
 	// our query
-	return []string{"reverse", txt}, nil
+	return []string{"reverse", content}, nil
 }
 
 func encode() ([]string, error) {
-	txt, err := loadText()
+	content, err := loadText()
 	if err != nil {
 		return nil, err
 	}
 
 	// our query
-	return []string{"encode", txt}, nil
+	return []string{"encode", content}, nil
 }
 
 func loadText() (string, error) {
-	// load file with sample text
-	content, err := utilities.LoadFile("generator/data/text.in")
-	if err != nil {
-		fmt.Println(err)
-		return "", err
-	}
+	// // load file with sample text
+	// content, err := utilities.LoadFile("generator/data/text.in")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return "", err
+	// }
 
 	// same story once again, get a rand number between zero and content length
 	index, err := utilities.Random(len(content))
