@@ -5,7 +5,7 @@ To make things interesting we want a high volume of requests being sent
 to your queue manager a.k.a Octopus Distributor.
 
 For that, we need to simulate a client sending as many requests as possible.
-Meet, Generator.
+Meet, The Assembler.
 
 What the assembler package does is to group functions that help us to build
 four types of fake messages that going to work as requests to our queue.
