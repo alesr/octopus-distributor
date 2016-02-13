@@ -54,7 +54,8 @@ var loadFileCases = []struct {
 			"foo bar",
 			"I'll make him an offer he can't refuse.",
 			"You shall not pass.",
-			"The quick brown fox jumps over the lazy dog."}},
+			"The quick brown fox jumps over the lazy dog.",
+			"Papa Americano"}},
 }
 
 func TestLoadFile(t *testing.T) {
