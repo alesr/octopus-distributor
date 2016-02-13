@@ -1,7 +1,23 @@
 package main
 
-import "github.com/alesr/octopus-distributor/generator"
+import (
+	"fmt"
+
+	"github.com/alesr/octopus-distributor/generator"
+)
 
 func main() {
-	generator.Messages()
+
+	// creates a channel for requests
+	// these requests going to be sent by a hyp
+	requestCh := make(chan []string)
+	go generator.Messenger(requestCh)
+
+	for i := 0; i < 10; i++ {
+		select {
+		case msg := <-requestCh:
+			fmt.Println(msg)
+		}
+	}
+
 }
