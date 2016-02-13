@@ -49,25 +49,14 @@ func init() {
 
 // GetRequest call messenger() to delivery some message
 // and send it over the request channel
-func GetRequest(requestCh chan []string, doneCh chan bool) {
-
-	// the default behaviour is to send messages to request	channel.
-	// as soon we receive from done channel, we return the function
-	// and the channel can be safely closed by the caller
-	go func() {
-		for {
-			select {
-			case <-doneCh:
-				return
-			default:
-				msg, err := messenger()
-				if err != nil {
-					log.Fatal(err)
-				}
-				requestCh <- msg
-			}
+func GetRequest(requestCh chan []string) {
+	for {
+		msg, err := messenger()
+		if err != nil {
+			log.Fatal(err)
 		}
-	}()
+		requestCh <- msg
+	}
 }
 
 // messenger randomly chooses a message type and call the proper function to build this message.
@@ -137,6 +126,7 @@ func arithmetic() ([]string, error) {
 
 // a fibonacci message
 func fibonacci() []string {
+
 	// fib 30 should be big enough for our case
 	n, _ := utilities.Random(30)
 	return []string{"fibonacci", strconv.Itoa(n)}
