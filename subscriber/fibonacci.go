@@ -12,6 +12,7 @@ type fibonacci struct {
 }
 
 func runFibonacci(fibCh chan fibonacci) {
+
 	for {
 		select {
 		case f := <-fibCh:

@@ -3,6 +3,7 @@ package subscriber
 import (
 	"log"
 	"reflect"
+	"time"
 
 	"github.com/alesr/octopus-distributor/publisher"
 )
@@ -20,9 +21,10 @@ func Receiver() {
 	go publisher.GetRequest(requestCh)
 
 	// i will be our ID
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 1000000; i++ {
 		classifier(i, <-requestCh)
 	}
+	time.Sleep(time.Second * 3)
 }
 
 // Add an ID to each request and initialize structs
@@ -61,20 +63,18 @@ func distributor(task interface{}) {
 	switch reflect.TypeOf(task).String() {
 
 	case "*subscriber.arithmetic":
-
 		arith := task.(*arithmetic)
+
 		go runArithmetic(arithCh)
 		arithCh <- *arith
 
 	case "*subscriber.fibonacci":
-
 		fib := task.(*fibonacci)
 
 		go runFibonacci(fibCh)
 		fibCh <- *fib
 
 	case "*subscriber.reverse":
-
 		rev := task.(*reverse)
 
 		go runReverse(revCh)

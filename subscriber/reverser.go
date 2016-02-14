@@ -14,6 +14,7 @@ type reverse struct {
 }
 
 func runReverse(revCh chan reverse) {
+
 	for {
 		select {
 		case r := <-revCh:
