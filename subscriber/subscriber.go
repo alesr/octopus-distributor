@@ -1,11 +1,18 @@
-package distributor
+package subscriber
 
 import (
 	"log"
 	"reflect"
 	"strconv"
 
-	"github.com/alesr/octopus-distributor/assembler"
+	"github.com/alesr/octopus-distributor/publisher"
+)
+
+var (
+	arithCh = make(chan []int)
+	fibCh   = make(chan Fibonacci)
+	revCh   = make(chan Reverse)
+	encCh   = make(chan string)
 )
 
 // Arithmetic request data
@@ -79,18 +86,19 @@ func (enc *Encode) parse() error {
 	return nil
 }
 
-// Receive - triggers the system to start receiving requests
-func Receive() {
+// Receiver triggers the system to start receiving requests
+func Receiver() {
 	requestCh := make(chan []string)
-	go assembler.GetRequest(requestCh)
+	go publisher.GetRequest(requestCh)
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 500; i++ {
 		classifier(i, <-requestCh)
 	}
 }
 
 // Add an ID to each request and initialize structs
 func classifier(i int, request []string) {
+
 	var task interface{}
 
 	switch request[0] {
@@ -122,29 +130,37 @@ func distributor(task interface{}) {
 	// After that, call parse method to fill the struct fields
 	// and send the problem to the right hands.
 	switch reflect.TypeOf(task).String() {
+	case "*subscriber.Arithmetic":
 
-	case "*distributor.Arithmetic":
 		arith := task.(*Arithmetic)
 
 		if err := arith.parse(); err != nil {
 			log.Fatal(err)
 		}
 
-	case "*distributor.Fibonacci":
+	case "*subscriber.Fibonacci":
+
 		fib := task.(*Fibonacci)
 
 		if err := fib.parse(); err != nil {
 			log.Fatal(err)
 		}
 
-	case "*distributor.Reverse":
+		go fibonacci(fibCh)
+		fibCh <- *fib
+
+	case "*subscriber.Reverse":
+
 		rev := task.(*Reverse)
 
 		if err := rev.parse(); err != nil {
 			log.Fatal(err)
 		}
 
-	case "*distributor.Encode":
+		go reverser(revCh)
+		revCh <- *rev
+
+	case "*subscriber.Encode":
 		enc := task.(*Encode)
 
 		if err := enc.parse(); err != nil {

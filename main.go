@@ -1,7 +1,7 @@
 package main
 
-import "github.com/alesr/octopus-distributor/distributor"
+import "github.com/alesr/octopus-distributor/subscriber"
 
 func main() {
-	distributor.Receive()
+	subscriber.Receiver()
 }

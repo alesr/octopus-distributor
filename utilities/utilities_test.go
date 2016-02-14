@@ -29,8 +29,8 @@ var checkFileTestCases = []struct {
 	filepath string
 	exist    bool
 }{
-	{"../assembler/data/text.in", true},
-	{"../assembler/data/text.text", false},
+	{"../publisher/data/text.in", true},
+	{"../publisher/data/text.text", false},
 	{"../data/text.text", false},
 }
 
@@ -47,7 +47,7 @@ var loadFileCases = []struct {
 	filepath string
 	content  []string
 }{
-	{"../assembler/data/text.in",
+	{"../publisher/data/text.in",
 		[]string{
 			"Lorem ipsum dolor sit amet.",
 			"Hello, World",
