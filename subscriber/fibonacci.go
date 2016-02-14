@@ -1,28 +1,55 @@
 package subscriber
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
-func fibonacci(fibCh chan Fibonacci) {
+type fibonacci struct {
+	request       []string
+	id, n, result int
+	err           error
+}
+
+func calcFibonacci(fibCh chan fibonacci) {
 	for {
 		select {
 		case f := <-fibCh:
-			go func(fibCh chan Fibonacci) {
 
-				f.result = nthFibonacci(f.n)
+			go func(fibCh chan fibonacci) {
+
+				if err := f.parse(); err != nil {
+					f.err = err
+					return
+				}
+				f.nthFibonacci()
 				fmt.Println(f)
 			}(fibCh)
 		}
 	}
 }
 
-// Return the nth Fibonacci value
-func nthFibonacci(pos int) int {
-	c := fibonacciGen()
-	f := make([]int, pos)
-	for i := 0; i <= pos; i++ {
-		f = append(f, <-c)
+// Parse the request as Fibonacci struct
+func (fib *fibonacci) parse() error {
+
+	nValue, err := strconv.Atoi(fib.request[1])
+	if err != nil {
+		fib.err = err
+		return err
 	}
-	return f[len(f)-1]
+
+	fib.n = nValue
+	return nil
+}
+
+// Return the nth Fibonacci value
+func (fib *fibonacci) nthFibonacci() {
+	c := fibonacciGen()
+	fibList := make([]int, fib.n)
+	for i := 0; i <= fib.n; i++ {
+		fibList = append(fibList, <-c)
+	}
+	fib.result = fibList[len(fibList)-1]
 }
 
 // Emit a infinite stream of Fibonacci values.
@@ -34,6 +61,5 @@ func fibonacciGen() chan int {
 			c <- i
 		}
 	}()
-
 	return c
 }

@@ -5,45 +5,63 @@ import (
 	"strings"
 )
 
-func reverser(revCh chan Reverse) {
+// reverse request data
+type reverse struct {
+	request      []string
+	id           int
+	text, result string
+	err          error
+}
+
+func reverser(revCh chan reverse) {
 	for {
 		select {
 		case r := <-revCh:
-			go func(revCh chan Reverse) {
-				r.result = stringReverse(r.text)
+			go func(revCh chan reverse) {
+
+				if err := r.parse(); err != nil {
+					r.err = err
+					return
+				}
+				r.stringReverse()
 				fmt.Println(r)
 			}(revCh)
 		}
-
 	}
 }
 
-func stringReverse(s string) string {
+// Parse the request as Reverse struct
+func (r *reverse) parse() error {
+	r.text = r.request[1]
+	return nil
+}
 
-	strLen := len(s)
+func (r *reverse) stringReverse() {
+
+	strLen := len(r.text)
 
 	// The reverse of a empty string is a empty string
 	if strLen == 0 {
-		return s
+		r.result = r.text
 	}
 
 	// Same above
 	if strLen == 1 {
-		return s
+		r.result = r.text
 	}
 
 	// Convert s into unicode points
-	r := []rune(s)
+	s := []rune(r.text)
 
 	// Last index
-	rLen := len(r) - 1
+	rLen := len(s) - 1
 
 	// String new home
 	rev := []string{}
 
 	for i := rLen; i >= 0; i-- {
-		rev = append(rev, string(r[i]))
+		rev = append(rev, string(s[i]))
 	}
 
-	return strings.Join(rev, "")
+	r.result = strings.Join(rev, "")
 }

@@ -3,81 +3,23 @@ package subscriber
 import (
 	"log"
 	"reflect"
-	"strconv"
 
 	"github.com/alesr/octopus-distributor/publisher"
 )
 
 var (
-	arithCh = make(chan []int)
-	fibCh   = make(chan Fibonacci)
-	revCh   = make(chan Reverse)
-	encCh   = make(chan string)
+	arithCh = make(chan arithmetic)
+	fibCh   = make(chan fibonacci)
+	revCh   = make(chan reverse)
+	encCh   = make(chan Encode)
 )
-
-// Arithmetic request data
-type Arithmetic struct {
-	request          []string
-	operation        string
-	id, a, b, result int
-}
-
-// Fibonacci request data
-type Fibonacci struct {
-	request       []string
-	id, n, result int
-}
-
-// Reverse request data
-type Reverse struct {
-	request      []string
-	id           int
-	text, result string
-}
 
 // Encode request data
 type Encode struct {
 	request      []string
 	id           int
 	text, result string
-}
-
-// Parse the request as Arithmetic struct
-func (arith *Arithmetic) parse() error {
-
-	arith.operation = arith.request[0]
-
-	aValue, err := strconv.Atoi(arith.request[1])
-	if err != nil {
-		return err
-	}
-
-	arith.a = aValue
-
-	bValue, err := strconv.Atoi(arith.request[1])
-	if err != nil {
-		return err
-	}
-	arith.b = bValue
-	return nil
-}
-
-// Parse the request as Fibonacci struct
-func (fib *Fibonacci) parse() error {
-
-	nValue, err := strconv.Atoi(fib.request[1])
-	if err != nil {
-		return err
-	}
-
-	fib.n = nValue
-	return nil
-}
-
-// Parse the request as Reverse struct
-func (rev *Reverse) parse() error {
-	rev.text = rev.request[1]
-	return nil
+	err          error
 }
 
 // Parse the request as Encode struct
@@ -91,7 +33,7 @@ func Receiver() {
 	requestCh := make(chan []string)
 	go publisher.GetRequest(requestCh)
 
-	for i := 0; i < 100000; i++ {
+	for i := 0; i < 10; i++ {
 		classifier(i, <-requestCh)
 	}
 }
@@ -103,17 +45,17 @@ func classifier(i int, request []string) {
 
 	switch request[0] {
 	case "add":
-		task = &Arithmetic{request: request, id: i}
+		task = &arithmetic{request: request, id: i}
 	case "sub":
-		task = &Arithmetic{request: request, id: i}
+		task = &arithmetic{request: request, id: i}
 	case "mult":
-		task = &Arithmetic{request: request, id: i}
+		task = &arithmetic{request: request, id: i}
 	case "div":
-		task = &Arithmetic{request: request, id: i}
+		task = &arithmetic{request: request, id: i}
 	case "fibonacci":
-		task = &Fibonacci{request: request, id: i}
+		task = &fibonacci{request: request, id: i}
 	case "reverse":
-		task = &Reverse{request: request, id: i}
+		task = &reverse{request: request, id: i}
 	case "encode":
 		task = &Encode{request: request, id: i}
 	default:
@@ -130,28 +72,32 @@ func distributor(task interface{}) {
 	// After that, call parse method to fill the struct fields
 	// and send the problem to the right hands.
 	switch reflect.TypeOf(task).String() {
-	case "*subscriber.Arithmetic":
+	case "*subscriber.arithmetic":
 
-		arith := task.(*Arithmetic)
+		arith := task.(*arithmetic)
 
 		if err := arith.parse(); err != nil {
-			log.Fatal(err)
+			return
 		}
 
-	case "*subscriber.Fibonacci":
+		go calcArithmetic(arithCh)
 
-		fib := task.(*Fibonacci)
+		arithCh <- *arith
+
+	case "*subscriber.fibonacci":
+
+		fib := task.(*fibonacci)
 
 		if err := fib.parse(); err != nil {
-			log.Fatal(err)
+			return
 		}
 
-		go fibonacci(fibCh)
+		go calcFibonacci(fibCh)
 		fibCh <- *fib
 
-	case "*subscriber.Reverse":
+	case "*subscriber.reverse":
 
-		rev := task.(*Reverse)
+		rev := task.(*reverse)
 
 		if err := rev.parse(); err != nil {
 			log.Fatal(err)
