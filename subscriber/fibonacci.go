@@ -20,6 +20,7 @@ func runFibonacci(fibCh chan fibonacci) {
 				return
 			}
 			f.nthFibonacci()
+
 			fmt.Println(f)
 		}
 	}
@@ -58,4 +59,8 @@ func fibonacciGen() chan int {
 		}
 	}()
 	return c
+}
+
+func (fib fibonacci) String() string {
+	return fmt.Sprintf("ID %d    Request: Fibonacci(%d)    Result: %d", fib.id, fib.n, fib.result)
 }
