@@ -18,10 +18,10 @@ func calcFibonacci(fibCh chan fibonacci) {
 
 			go func(fibCh chan fibonacci) {
 
-				if err := f.parse(); err != nil {
-					f.err = err
+				if err := f.parser(); err != nil {
 					return
 				}
+
 				f.nthFibonacci()
 				fmt.Println(f)
 			}(fibCh)
@@ -30,7 +30,7 @@ func calcFibonacci(fibCh chan fibonacci) {
 }
 
 // Parse the request as Fibonacci struct
-func (fib *fibonacci) parse() error {
+func (fib *fibonacci) parser() error {
 
 	nValue, err := strconv.Atoi(fib.request[1])
 	if err != nil {

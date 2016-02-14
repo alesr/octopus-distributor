@@ -72,25 +72,16 @@ func distributor(task interface{}) {
 	// After that, call parse method to fill the struct fields
 	// and send the problem to the right hands.
 	switch reflect.TypeOf(task).String() {
+
 	case "*subscriber.arithmetic":
 
 		arith := task.(*arithmetic)
-
-		if err := arith.parse(); err != nil {
-			return
-		}
-
 		go calcArithmetic(arithCh)
-
 		arithCh <- *arith
 
 	case "*subscriber.fibonacci":
 
 		fib := task.(*fibonacci)
-
-		if err := fib.parse(); err != nil {
-			return
-		}
 
 		go calcFibonacci(fibCh)
 		fibCh <- *fib
@@ -99,11 +90,7 @@ func distributor(task interface{}) {
 
 		rev := task.(*reverse)
 
-		if err := rev.parse(); err != nil {
-			log.Fatal(err)
-		}
-
-		go reverser(revCh)
+		go calcReverse(revCh)
 		revCh <- *rev
 
 	case "*subscriber.Encode":

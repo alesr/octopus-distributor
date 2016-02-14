@@ -22,6 +22,10 @@ func calcArithmetic(arithCh chan arithmetic) {
 		case a := <-arithCh:
 			go func(arithCh chan arithmetic) {
 
+				if err := a.parser(); err != nil {
+					return
+				}
+
 				switch a.operation {
 				case "add":
 					a.addition()
@@ -40,7 +44,7 @@ func calcArithmetic(arithCh chan arithmetic) {
 }
 
 // Parse the request as Arithmetic struct
-func (arith *arithmetic) parse() error {
+func (arith *arithmetic) parser() error {
 
 	arith.operation = arith.request[0]
 

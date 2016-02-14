@@ -13,16 +13,14 @@ type reverse struct {
 	err          error
 }
 
-func reverser(revCh chan reverse) {
+func calcReverse(revCh chan reverse) {
 	for {
 		select {
 		case r := <-revCh:
 			go func(revCh chan reverse) {
 
-				if err := r.parse(); err != nil {
-					r.err = err
-					return
-				}
+				r.parser()
+
 				r.stringReverse()
 				fmt.Println(r)
 			}(revCh)
@@ -31,9 +29,8 @@ func reverser(revCh chan reverse) {
 }
 
 // Parse the request as Reverse struct
-func (r *reverse) parse() error {
+func (r *reverse) parser() {
 	r.text = r.request[1]
-	return nil
 }
 
 func (r *reverse) stringReverse() {
