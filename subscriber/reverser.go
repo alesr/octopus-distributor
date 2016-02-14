@@ -13,52 +13,48 @@ type reverse struct {
 	err          error
 }
 
-func calcReverse(revCh chan reverse) {
+func runReverse(revCh chan reverse) {
 	for {
 		select {
 		case r := <-revCh:
-			go func(revCh chan reverse) {
-
-				r.parser()
-
-				r.stringReverse()
-				fmt.Println(r)
-			}(revCh)
+			r.parser()
+			r.reverseText()
+			fmt.Println(r)
 		}
 	}
 }
 
 // Parse the request as Reverse struct
-func (r *reverse) parser() {
-	r.text = r.request[1]
+func (rev *reverse) parser() {
+	rev.text = rev.request[1]
 }
 
-func (r *reverse) stringReverse() {
+func (rev *reverse) reverseText() {
 
-	strLen := len(r.text)
+	strLen := len(rev.text)
 
 	// The reverse of a empty string is a empty string
 	if strLen == 0 {
-		r.result = r.text
+		rev.result = rev.text
 	}
 
 	// Same above
 	if strLen == 1 {
-		r.result = r.text
+		rev.result = rev.text
 	}
 
 	// Convert s into unicode points
-	s := []rune(r.text)
+	s := []rune(rev.text)
 
 	// Last index
 	rLen := len(s) - 1
 
 	// String new home
-	rev := []string{}
+	reverse := []string{}
 
 	for i := rLen; i >= 0; i-- {
-		rev = append(rev, string(s[i]))
+		reverse = append(reverse, string(s[i]))
 	}
 
-	r.result = strings.Join(rev, "")
+	rev.result = strings.Join(reverse, "")
 }

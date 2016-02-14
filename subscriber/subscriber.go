@@ -11,29 +11,15 @@ var (
 	arithCh = make(chan arithmetic)
 	fibCh   = make(chan fibonacci)
 	revCh   = make(chan reverse)
-	encCh   = make(chan Encode)
+	encCh   = make(chan encode)
 )
-
-// Encode request data
-type Encode struct {
-	request      []string
-	id           int
-	text, result string
-	err          error
-}
-
-// Parse the request as Encode struct
-func (enc *Encode) parse() error {
-	enc.text = enc.request[1]
-	return nil
-}
 
 // Receiver triggers the system to start receiving requests
 func Receiver() {
 	requestCh := make(chan []string)
 	go publisher.GetRequest(requestCh)
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 100000; i++ {
 		classifier(i, <-requestCh)
 	}
 }
@@ -57,7 +43,7 @@ func classifier(i int, request []string) {
 	case "reverse":
 		task = &reverse{request: request, id: i}
 	case "encode":
-		task = &Encode{request: request, id: i}
+		task = &encode{request: request, id: i}
 	default:
 		log.Fatal("invalid request")
 	}
@@ -76,28 +62,27 @@ func distributor(task interface{}) {
 	case "*subscriber.arithmetic":
 
 		arith := task.(*arithmetic)
-		go calcArithmetic(arithCh)
+		go runArithmetic(arithCh)
 		arithCh <- *arith
 
 	case "*subscriber.fibonacci":
 
 		fib := task.(*fibonacci)
 
-		go calcFibonacci(fibCh)
+		go runFibonacci(fibCh)
 		fibCh <- *fib
 
 	case "*subscriber.reverse":
 
 		rev := task.(*reverse)
 
-		go calcReverse(revCh)
+		go runReverse(revCh)
 		revCh <- *rev
 
-	case "*subscriber.Encode":
-		enc := task.(*Encode)
+	case "*subscriber.encode":
+		enc := task.(*encode)
 
-		if err := enc.parse(); err != nil {
-			log.Fatal(err)
-		}
+		go runEncode(encCh)
+		encCh <- *enc
 	}
 }

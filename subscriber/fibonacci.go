@@ -11,20 +11,16 @@ type fibonacci struct {
 	err           error
 }
 
-func calcFibonacci(fibCh chan fibonacci) {
+func runFibonacci(fibCh chan fibonacci) {
 	for {
 		select {
 		case f := <-fibCh:
 
-			go func(fibCh chan fibonacci) {
-
-				if err := f.parser(); err != nil {
-					return
-				}
-
-				f.nthFibonacci()
-				fmt.Println(f)
-			}(fibCh)
+			if err := f.parser(); err != nil {
+				return
+			}
+			f.nthFibonacci()
+			fmt.Println(f)
 		}
 	}
 }

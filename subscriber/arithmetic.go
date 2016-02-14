@@ -16,29 +16,27 @@ type arithmetic struct {
 	err              error
 }
 
-func calcArithmetic(arithCh chan arithmetic) {
+func runArithmetic(arithCh chan arithmetic) {
 	for {
 		select {
 		case a := <-arithCh:
-			go func(arithCh chan arithmetic) {
 
-				if err := a.parser(); err != nil {
-					return
-				}
+			if err := a.parser(); err != nil {
+				return
+			}
 
-				switch a.operation {
-				case "add":
-					a.addition()
-				case "sub":
-					a.subtraction()
-				case "mult":
-					a.multiplication()
-				case "div":
-					a.division()
-				}
+			switch a.operation {
+			case "add":
+				a.addition()
+			case "sub":
+				a.subtraction()
+			case "mult":
+				a.multiplication()
+			case "div":
+				a.division()
+			}
 
-				fmt.Println(a)
-			}(arithCh)
+			fmt.Println(a)
 		}
 	}
 }
