@@ -55,6 +55,9 @@ func (rev *reverse) reverseText() {
 	for i := rLen; i >= 0; i-- {
 		reverse = append(reverse, string(s[i]))
 	}
-
 	rev.result = strings.Join(reverse, "")
+}
+
+func (rev reverse) String() string {
+	return fmt.Sprintf("id %d   %s   ->    %s", rev.id, rev.text, rev.result)
 }

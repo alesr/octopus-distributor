@@ -38,6 +38,9 @@ func (enc *encode) encodeText() {
 		enc.err = err
 		return
 	}
-
 	enc.result = string(hashedTxt)
+}
+
+func (enc encode) String() string {
+	return fmt.Sprintf("id %d   %s   ->    %s", enc.id, enc.text, enc.result)
 }

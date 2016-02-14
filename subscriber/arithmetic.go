@@ -100,5 +100,5 @@ func (arith arithmetic) String() string {
 	case "div":
 		symbol = "/"
 	}
-	return fmt.Sprintf("ID: %d   %d %s %d = %d", arith.id, arith.a, symbol, arith.b, arith.result)
+	return fmt.Sprintf("id %d   %d %s %d = %d", arith.id, arith.a, symbol, arith.b, arith.result)
 }
