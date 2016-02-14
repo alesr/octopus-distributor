@@ -91,7 +91,7 @@ func Receiver() {
 	requestCh := make(chan []string)
 	go publisher.GetRequest(requestCh)
 
-	for i := 0; i < 500; i++ {
+	for i := 0; i < 100000; i++ {
 		classifier(i, <-requestCh)
 	}
 }

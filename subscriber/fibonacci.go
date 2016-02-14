@@ -4,11 +4,14 @@ import "fmt"
 
 func fibonacci(fibCh chan Fibonacci) {
 	for {
-		go func(fibCh chan Fibonacci) {
-			f := <-fibCh
-			f.result = nthFibonacci(f.n)
-			fmt.Println(f)
-		}(fibCh)
+		select {
+		case f := <-fibCh:
+			go func(fibCh chan Fibonacci) {
+
+				f.result = nthFibonacci(f.n)
+				fmt.Println(f)
+			}(fibCh)
+		}
 	}
 }
 

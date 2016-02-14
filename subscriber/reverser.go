@@ -7,11 +7,14 @@ import (
 
 func reverser(revCh chan Reverse) {
 	for {
-		go func(revCh chan Reverse) {
-			r := <-revCh
-			r.result = stringReverse(r.text)
-			fmt.Println(r)
-		}(revCh)
+		select {
+		case r := <-revCh:
+			go func(revCh chan Reverse) {
+				r.result = stringReverse(r.text)
+				fmt.Println(r)
+			}(revCh)
+		}
+
 	}
 }
 
