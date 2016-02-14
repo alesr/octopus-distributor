@@ -62,5 +62,5 @@ func fibonacciGen() chan int {
 }
 
 func (fib fibonacci) String() string {
-	return fmt.Sprintf("ID %d    Request: Fibonacci(%d)    Result: %d", fib.id, fib.n, fib.result)
+	return fmt.Sprintf("ID %d    Fibonacci(%d) = %d", fib.id, fib.n, fib.result)
 }

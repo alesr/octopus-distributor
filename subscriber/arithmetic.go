@@ -35,7 +35,6 @@ func runArithmetic(arithCh chan arithmetic) {
 			case "div":
 				a.division()
 			}
-
 			fmt.Println(a)
 		}
 	}
@@ -85,4 +84,21 @@ func (arith *arithmetic) division() {
 
 	// only the int part
 	arith.result = arith.a / arith.b
+}
+
+func (arith arithmetic) String() string {
+
+	var symbol string
+
+	switch arith.operation {
+	case "add":
+		symbol = "+"
+	case "sub":
+		symbol = "-"
+	case "mult":
+		symbol = "*"
+	case "div":
+		symbol = "/"
+	}
+	return fmt.Sprintf("ID: %d   %d %s %d = %d", arith.id, arith.a, symbol, arith.b, arith.result)
 }
