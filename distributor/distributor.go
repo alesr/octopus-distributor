@@ -2,81 +2,95 @@ package distributor
 
 import (
 	"log"
+	"reflect"
+	"strconv"
 
 	"github.com/alesr/octopus-distributor/assembler"
 )
 
-// Arithmetic ...
+// Arithmetic request data
 type Arithmetic struct {
 	request          []string
 	operation        string
 	id, a, b, result int
 }
 
-// Fibonacci ...
+// Fibonacci request data
 type Fibonacci struct {
 	request       []string
 	id, n, result int
 }
 
-// Reverse ...
+// Reverse request data
 type Reverse struct {
 	request      []string
 	id           int
 	text, result string
 }
 
-// Encode ..
+// Encode request data
 type Encode struct {
 	request      []string
 	id           int
 	text, result string
 }
 
-// Parser ..
-type Parser interface {
-	parse() error
-}
+// Parse the request as Arithmetic struct
+func (arith *Arithmetic) parse() error {
 
-func (a *Arithmetic) parse(request map[string]string) error {
+	arith.operation = arith.request[0]
+
+	aValue, err := strconv.Atoi(arith.request[1])
+	if err != nil {
+		return err
+	}
+
+	arith.a = aValue
+
+	bValue, err := strconv.Atoi(arith.request[1])
+	if err != nil {
+		return err
+	}
+	arith.b = bValue
 	return nil
 }
 
-func (f *Fibonacci) parse(request map[string]string) error {
+// Parse the request as Fibonacci struct
+func (fib *Fibonacci) parse() error {
+
+	nValue, err := strconv.Atoi(fib.request[1])
+	if err != nil {
+		return err
+	}
+
+	fib.n = nValue
 	return nil
 }
 
-func (r *Reverse) parse(request map[string]string) error {
+// Parse the request as Reverse struct
+func (rev *Reverse) parse() error {
+	rev.text = rev.request[1]
 	return nil
 }
 
-func (e *Encode) parse(request map[string]string) error {
+// Parse the request as Encode struct
+func (enc *Encode) parse() error {
+	enc.text = enc.request[1]
 	return nil
 }
 
-// Receive triggers the system to start receive requests and steam the machine.
+// Receive - triggers the system to start receiving requests
 func Receive() {
 	requestCh := make(chan []string)
 	go assembler.GetRequest(requestCh)
 
 	for i := 0; i < 10; i++ {
-		register(i, <-requestCh)
+		classifier(i, <-requestCh)
 	}
 }
 
-// to make things more interesting let's add an ID to each request.
-// doesn't make sense add the ID in the assembler side since in a real situation
-// we cannot expect that every "client" can control the ID attribution.
-// even worse if we have many clients sending requests to the request channel.
-// also, so far a request is formed by an operator which can be "arithmetic",
-// "fibonacci", "reverse" or "encode" and arguments which are the N following
-// values after the operator, like [add 2 3] where 2 and 3 are the arguments
-// for the addition in this case. said that, would be good to organize the request
-// in a map to make it easy to handle later.
-// we'll organize the received request under the form:
-// [id: XX, op: encode, argX: some string]
-func register(i int, request []string) {
-
+// Add an ID to each request and initialize structs
+func classifier(i int, request []string) {
 	var task interface{}
 
 	switch request[0] {
@@ -92,12 +106,49 @@ func register(i int, request []string) {
 		task = &Fibonacci{request: request, id: i}
 	case "reverse":
 		task = &Reverse{request: request, id: i}
-	case "enconde":
+	case "encode":
 		task = &Encode{request: request, id: i}
 	default:
-
-		// REVIEW: to work on data later
 		log.Fatal("invalid request")
 	}
+	distributor(task)
+}
 
+// Organize requests into types and distribute them to respective channels.
+func distributor(task interface{}) {
+
+	// Checks the underlying type held by the empty interface
+	// and assert the corresponding type to the task.
+	// After that, call parse method to fill the struct fields
+	// and send the problem to the right hands.
+	switch reflect.TypeOf(task).String() {
+
+	case "*distributor.Arithmetic":
+		arith := task.(*Arithmetic)
+
+		if err := arith.parse(); err != nil {
+			log.Fatal(err)
+		}
+
+	case "*distributor.Fibonacci":
+		fib := task.(*Fibonacci)
+
+		if err := fib.parse(); err != nil {
+			log.Fatal(err)
+		}
+
+	case "*distributor.Reverse":
+		rev := task.(*Reverse)
+
+		if err := rev.parse(); err != nil {
+			log.Fatal(err)
+		}
+
+	case "*distributor.Encode":
+		enc := task.(*Encode)
+
+		if err := enc.parse(); err != nil {
+			log.Fatal(err)
+		}
+	}
 }
