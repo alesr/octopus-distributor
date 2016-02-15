@@ -15,14 +15,10 @@ type reverse struct {
 
 func runReverse(revCh chan reverse) {
 
-	for {
-		select {
-		case r := <-revCh:
-			r.parser()
-			r.reverseText()
-			fmt.Println(r)
-		}
-	}
+	r := <-revCh
+	r.parser()
+	r.reverseText()
+	fmt.Println(r)
 }
 
 // Parse the request as Reverse struct

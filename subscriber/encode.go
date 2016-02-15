@@ -15,14 +15,20 @@ type encode struct {
 }
 
 func runEncode(revCh chan encode) {
-	for {
-		select {
-		case e := <-encCh:
-			e.parser()
-			e.encodeText()
-			fmt.Println(e)
-		}
-	}
+	// for {
+	// 	select {
+	// 	case e := <-encCh:
+	// 		e.parser()
+	// 		e.encodeText()
+	// 		fmt.Println(e)
+	// 	}
+	// }
+
+	e := <-encCh
+	e.parser()
+	e.encodeText()
+	fmt.Println(e)
+
 }
 
 // Parse the request as Encode struct

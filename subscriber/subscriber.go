@@ -18,13 +18,18 @@ var (
 // Receiver triggers the system to start receiving requests
 func Receiver() {
 	requestCh := make(chan []string)
-	go publisher.GetRequest(requestCh)
+
+	go func() {
+		for {
+			publisher.GetRequest(requestCh)
+		}
+	}()
 
 	// i will be our ID
-	for i := 1; i <= 100000; i++ {
+	for i := 1; i <= 1000; i++ {
 		classifier(i, <-requestCh)
 	}
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 1)
 }
 
 // Add an ID to each request and initialize structs

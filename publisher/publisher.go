@@ -5,14 +5,14 @@ To make things interesting we want a high volume of requests being sent
 to your queue manager a.k.a Octopus Distributor.
 
 For that, we need to simulate a client sending as many requests as possible.
-Meet, the Publisher.
+Meet, the Publisher package.
 
 What the publisher package does is to group functions that help us to build
 four types of fake messages that going to work as requests to our queue.
 
 The messages types are arithmetic, fibonacci, reverse and encode.
 
-After build these requests we send them randomly over the request channel.
+After build these messages we send them randomly over the request channel.
 
 This way, we should expect the channel receive messages like:
 
@@ -33,7 +33,7 @@ import (
 
 // On the text.in file inside our data folder, we have some sample strings that
 // we're going to use to form the text to be used by the reverse and encode
-// function to build fake messages.
+// functions to build fake messages.
 // Since we don't want to load that file everytime we assemble a message, let's
 // do that on a init function and keep on a variable called content.
 var content []string
@@ -48,30 +48,29 @@ func init() {
 	content = txt
 }
 
-// GetRequest call messenger() to delivery some message
-// and send it over the request channel.
+// GetRequest call messenger() to build a message and delivery it as a request
+// by sending it over the request channel.
 func GetRequest(requestCh chan []string) {
-	for {
-		msg, err := messenger()
-		if err != nil {
-			log.Fatal(err)
-		}
-		requestCh <- msg
+
+	msg, err := messenger()
+	if err != nil {
+		log.Fatal(err)
 	}
+	requestCh <- msg
 }
 
 // Randomly choose a message type and call the proper function to build
-// the message and return the new request to GetRequest function.
+// that message. Then return the message back to GetRequest function.
 func messenger() ([]string, error) {
 
-	// The basic operations that the octopus are prepared to handle.
+	// The basic tasks that the octopus are prepared to handle.
 	taskList := []string{"arithmetic", "fibonacci", "reverse", "encode"}
 
 	// Choose a random index from taskList
 	index, err := utilities.Random(len(taskList))
 	if err != nil {
 		// If you are here and you don't know why, check if taskList is empty.
-		log.Fatal(err)
+		return nil, err
 	}
 
 	// Hold the message to be sent.
@@ -125,7 +124,7 @@ func arithmetic() ([]string, error) {
 	return []string{operation, strconv.Itoa(a), strconv.Itoa(b)}, nil
 }
 
-// A fibonacci request.
+// A Fibonacci request.
 func fibonacci() []string {
 
 	// Fib 30 should be big enough for our case.

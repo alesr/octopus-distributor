@@ -13,17 +13,25 @@ type fibonacci struct {
 
 func runFibonacci(fibCh chan fibonacci) {
 
-	for {
-		select {
-		case f := <-fibCh:
+	// for {
+	// 	select {
+	// 	case f := <-fibCh:
+	//
+	// 		if err := f.parser(); err != nil {
+	// 			return
+	// 		}
+	// 		f.nthFibonacci()
+	// 		fmt.Println(f)
+	// 	}
+	// }
+	f := <-fibCh
 
-			if err := f.parser(); err != nil {
-				return
-			}
-			f.nthFibonacci()
-			fmt.Println(f)
-		}
+	if err := f.parser(); err != nil {
+		return
 	}
+	f.nthFibonacci()
+	fmt.Println(f)
+
 }
 
 // Parse the request as Fibonacci struct

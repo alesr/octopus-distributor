@@ -17,28 +17,25 @@ type arithmetic struct {
 }
 
 func runArithmetic(arithCh chan arithmetic) {
-	for {
-		select {
-		case a := <-arithCh:
 
-			if err := a.parser(); err != nil {
-				return
-			}
+	a := <-arithCh
 
-			switch a.operation {
-			case "add":
-				a.addition()
-			case "sub":
-				a.subtraction()
-			case "mult":
-				a.multiplication()
-			case "div":
-				a.division()
-			}
-
-			fmt.Println(a)
-		}
+	if err := a.parser(); err != nil {
+		return
 	}
+
+	switch a.operation {
+	case "add":
+		a.addition()
+	case "sub":
+		a.subtraction()
+	case "mult":
+		a.multiplication()
+	case "div":
+		a.division()
+	}
+
+	fmt.Println(a)
 }
 
 // Parse the request as Arithmetic struct
