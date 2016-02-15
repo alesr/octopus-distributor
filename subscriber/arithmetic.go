@@ -35,6 +35,7 @@ func runArithmetic(arithCh chan arithmetic) {
 			case "div":
 				a.division()
 			}
+
 			fmt.Println(a)
 		}
 	}

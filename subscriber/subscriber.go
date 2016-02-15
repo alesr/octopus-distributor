@@ -21,7 +21,7 @@ func Receiver() {
 	go publisher.GetRequest(requestCh)
 
 	// i will be our ID
-	for i := 1; i <= 1000000; i++ {
+	for i := 1; i <= 100000; i++ {
 		classifier(i, <-requestCh)
 	}
 	time.Sleep(time.Second * 3)

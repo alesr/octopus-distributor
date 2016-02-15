@@ -21,7 +21,6 @@ func runFibonacci(fibCh chan fibonacci) {
 				return
 			}
 			f.nthFibonacci()
-
 			fmt.Println(f)
 		}
 	}
