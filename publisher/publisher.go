@@ -25,6 +25,7 @@ This way, we should expect the channel receive messages like:
 */
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 
@@ -58,6 +59,11 @@ func Sender(requestCh chan []string) {
 	}
 	requestCh <- msg
 
+}
+
+func Receiver(responseCh chan map[string]string) {
+
+	fmt.Println(<-responseCh)
 }
 
 // Randomly choose a message type and call the proper function to build

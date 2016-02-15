@@ -1,7 +1,6 @@
 package subscriber
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -39,7 +38,9 @@ func Run() {
 			request = append(request, strconv.Itoa(i))
 			distributor(request)
 		case result := <-resultCh:
-			fmt.Println(result)
+
+			go publisher.Receiver(responseCh)
+			responseCh <- result
 		}
 	}
 
