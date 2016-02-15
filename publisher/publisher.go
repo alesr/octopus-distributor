@@ -48,19 +48,20 @@ func init() {
 	content = txt
 }
 
-// GetRequest call messenger() to build a message and delivery it as a request
+// Sender call messenger() to build a message and delivery it as a request
 // by sending it over the request channel.
-func GetRequest(requestCh chan []string) {
+func Sender(requestCh chan []string) {
 
 	msg, err := messenger()
 	if err != nil {
 		log.Fatal(err)
 	}
 	requestCh <- msg
+
 }
 
 // Randomly choose a message type and call the proper function to build
-// that message. Then return the message back to GetRequest function.
+// that message. Then return the message back to Sender function.
 func messenger() ([]string, error) {
 
 	// The basic tasks that the octopus are prepared to handle.

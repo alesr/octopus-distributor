@@ -1,18 +1,16 @@
 package encode
 
-import (
-	"fmt"
+import "golang.org/x/crypto/bcrypt"
 
-	"golang.org/x/crypto/bcrypt"
-)
-
-func Exec(encCh chan []string) {
+func Exec(encCh chan []string, resultCh chan map[string]string) {
 
 	e := <-encCh
 
 	enc := parse(e)
 	encodeText(enc)
-	fmt.Println(enc)
+
+	resultCh <- enc
+
 }
 
 // Parse the request

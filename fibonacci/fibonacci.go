@@ -1,17 +1,15 @@
 package fibonacci
 
-import (
-	"fmt"
-	"strconv"
-)
+import "strconv"
 
-func Exec(fibCh chan []string) {
+func Exec(fibCh chan []string, resultCh chan map[string]string) {
 
 	f := <-fibCh
 
 	fib := parse(f)
 	nthFibonacci(fib)
-	fmt.Println(fib)
+
+	resultCh <- fib
 }
 
 // Parse the request

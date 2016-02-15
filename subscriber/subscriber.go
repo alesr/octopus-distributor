@@ -1,6 +1,7 @@
 package subscriber
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -12,57 +13,66 @@ import (
 )
 
 var (
-	arithCh = make(chan []string)
-	fibCh   = make(chan []string)
-	revCh   = make(chan []string)
-	encCh   = make(chan []string)
+	arithCh    = make(chan []string)
+	fibCh      = make(chan []string)
+	revCh      = make(chan []string)
+	encCh      = make(chan []string)
+	resultCh   = make(chan map[string]string)
+	responseCh = make(chan map[string]string)
 )
 
-// Receiver triggers the system to start receiving requests
-func Receiver() {
+// Trigger the system to start receiving requests
+func Run() {
 	requestCh := make(chan []string)
 
 	go func() {
 		for {
-			publisher.GetRequest(requestCh)
+			publisher.Sender(requestCh)
 		}
 	}()
 
 	// i will be our ID
-	for i := 1; i <= 1000; i++ {
-		request := <-requestCh
-		request = append(request, strconv.Itoa(i))
-		distributor(request)
+	for i := 1; i <= 10000; i++ {
+
+		select {
+		case request := <-requestCh:
+			request = append(request, strconv.Itoa(i))
+			distributor(request)
+		case result := <-resultCh:
+			fmt.Println(result)
+		}
 	}
+
 	time.Sleep(time.Second * 1)
 }
 
 // Distribute requests to respective channels.
+// No waiting in line. Everybody gets its own goroutine!
 func distributor(request []string) {
 
 	switch request[0] {
 
 	case "add":
-		go arithmetic.Exec(arithCh)
+		go arithmetic.Exec(arithCh, resultCh)
 		arithCh <- request
 	case "sub":
-		go arithmetic.Exec(arithCh)
+		go arithmetic.Exec(arithCh, resultCh)
 		arithCh <- request
 	case "mult":
-		go arithmetic.Exec(arithCh)
+		go arithmetic.Exec(arithCh, resultCh)
 		arithCh <- request
 	case "div":
-		go arithmetic.Exec(arithCh)
+		go arithmetic.Exec(arithCh, resultCh)
 		arithCh <- request
 	case "fibonacci":
-		go fibonacci.Exec(fibCh)
+		go fibonacci.Exec(fibCh, resultCh)
 		fibCh <- request
 	case "reverse":
-		go reverse.Exec(revCh)
+		go reverse.Exec(revCh, resultCh)
 		revCh <- request
 	case "encode":
-		go encode.Exec(encCh)
+		go encode.Exec(encCh, resultCh)
 		encCh <- request
-
 	}
+
 }

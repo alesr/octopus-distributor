@@ -1,17 +1,15 @@
 package reverse
 
-import (
-	"fmt"
-	"strings"
-)
+import "strings"
 
-func Exec(revCh chan []string) {
+func Exec(revCh chan []string, resultCh chan map[string]string) {
 
 	r := <-revCh
 
 	rev := parse(r)
 	reverseText(rev)
-	fmt.Println(rev)
+
+	resultCh <- rev
 }
 
 // Parse the request

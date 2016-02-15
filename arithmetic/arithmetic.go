@@ -2,13 +2,12 @@ package arithmetic
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 )
 
 var errZeroDivError = errors.New("cannot divide by zero")
 
-func Exec(arithCh chan []string) {
+func Exec(arithCh chan []string, resultCh chan map[string]string) {
 
 	a := <-arithCh
 
@@ -25,7 +24,8 @@ func Exec(arithCh chan []string) {
 		divide(arith)
 	}
 
-	fmt.Println(arith)
+	resultCh <- arith
+
 }
 
 // Parse the request
