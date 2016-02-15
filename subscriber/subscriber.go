@@ -1,18 +1,21 @@
 package subscriber
 
 import (
-	"log"
-	"reflect"
+	"strconv"
 	"time"
 
+	"github.com/alesr/octopus-distributor/arithmetic"
+	"github.com/alesr/octopus-distributor/encode"
+	"github.com/alesr/octopus-distributor/fibonacci"
 	"github.com/alesr/octopus-distributor/publisher"
+	"github.com/alesr/octopus-distributor/reverse"
 )
 
 var (
-	arithCh = make(chan arithmetic)
-	fibCh   = make(chan fibonacci)
-	revCh   = make(chan reverse)
-	encCh   = make(chan encode)
+	arithCh = make(chan []string)
+	fibCh   = make(chan []string)
+	revCh   = make(chan []string)
+	encCh   = make(chan []string)
 )
 
 // Receiver triggers the system to start receiving requests
@@ -27,68 +30,39 @@ func Receiver() {
 
 	// i will be our ID
 	for i := 1; i <= 1000; i++ {
-		classifier(i, <-requestCh)
+		request := <-requestCh
+		request = append(request, strconv.Itoa(i))
+		distributor(request)
 	}
 	time.Sleep(time.Second * 1)
 }
 
-// Add an ID to each request and initialize structs
-func classifier(i int, request []string) {
-
-	var task interface{}
+// Distribute requests to respective channels.
+func distributor(request []string) {
 
 	switch request[0] {
+
 	case "add":
-		task = &arithmetic{request: request, id: i}
+		go arithmetic.Exec(arithCh)
+		arithCh <- request
 	case "sub":
-		task = &arithmetic{request: request, id: i}
+		go arithmetic.Exec(arithCh)
+		arithCh <- request
 	case "mult":
-		task = &arithmetic{request: request, id: i}
+		go arithmetic.Exec(arithCh)
+		arithCh <- request
 	case "div":
-		task = &arithmetic{request: request, id: i}
+		go arithmetic.Exec(arithCh)
+		arithCh <- request
 	case "fibonacci":
-		task = &fibonacci{request: request, id: i}
+		go fibonacci.Exec(fibCh)
+		fibCh <- request
 	case "reverse":
-		task = &reverse{request: request, id: i}
+		go reverse.Exec(revCh)
+		revCh <- request
 	case "encode":
-		task = &encode{request: request, id: i}
-	default:
-		log.Fatal("invalid request")
-	}
-	distributor(task)
-}
+		go encode.Exec(encCh)
+		encCh <- request
 
-// Organize requests into types and distribute them to respective channels.
-func distributor(task interface{}) {
-
-	// Checks the underlying type held by the empty interface
-	// and assert the corresponding type to the task.
-	// After that, call parse method to fill the struct fields
-	// and send the problem to the right hands.
-	switch reflect.TypeOf(task).String() {
-
-	case "*subscriber.arithmetic":
-		arith := task.(*arithmetic)
-
-		go runArithmetic(arithCh)
-		arithCh <- *arith
-
-	case "*subscriber.fibonacci":
-		fib := task.(*fibonacci)
-
-		go runFibonacci(fibCh)
-		fibCh <- *fib
-
-	case "*subscriber.reverse":
-		rev := task.(*reverse)
-
-		go runReverse(revCh)
-		revCh <- *rev
-
-	case "*subscriber.encode":
-		enc := task.(*encode)
-
-		go runEncode(encCh)
-		encCh <- *enc
 	}
 }
