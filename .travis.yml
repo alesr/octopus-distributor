@@ -1,6 +1,5 @@
 language: go
 go: -tip
-sudo: required
 warnings_are_errors: true
 services:
   - docker
