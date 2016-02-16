@@ -1,6 +1,6 @@
+sudo: required
 language: go
 go: -tip
-sudo: false
 warnings_are_errors: true
 services:
   - docker
