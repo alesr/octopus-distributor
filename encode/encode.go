@@ -10,7 +10,6 @@ func Exec(encCh chan []string, resultCh chan map[string]string) {
 	encodeText(enc)
 
 	resultCh <- enc
-
 }
 
 // Parse the request
