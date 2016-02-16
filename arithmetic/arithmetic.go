@@ -10,7 +10,6 @@ var errZeroDivError = errors.New("cannot divide by zero")
 func Exec(arithCh chan []string, resultCh chan map[string]string) {
 
 	a := <-arithCh
-
 	arith := parse(a)
 
 	switch arith["task"] {
@@ -25,7 +24,6 @@ func Exec(arithCh chan []string, resultCh chan map[string]string) {
 	}
 
 	resultCh <- arith
-
 }
 
 // Parse the request
@@ -47,7 +45,6 @@ func add(arith map[string]string) {
 		arith["result"] = err.Error()
 		return
 	}
-
 	arith["result"] = strconv.Itoa(a + b)
 }
 
@@ -84,8 +81,9 @@ func divide(arith map[string]string) {
 		return
 	}
 
-	// only the int part
-	arith["result"] = strconv.Itoa(a / b)
+	result := float64(a) / float64(b)
+
+	arith["result"] = strconv.FormatFloat(result, 'f', 1, 64)
 }
 
 func toInt(a, b string) (int, int, error) {
@@ -99,6 +97,5 @@ func toInt(a, b string) (int, int, error) {
 	if err != nil {
 		return 0, 0, err
 	}
-
 	return intA, intB, nil
 }
