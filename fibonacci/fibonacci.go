@@ -34,6 +34,11 @@ func nthFibonacci(fib map[string]string) {
 		return
 	}
 
+	if n == 0 {
+		fib["result"] = "0"
+		return
+	}
+
 	fibList := make([]int, n)
 	for i := 0; i <= n; i++ {
 		fibList = append(fibList, <-c)
