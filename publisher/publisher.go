@@ -60,6 +60,7 @@ func Sender(requestCh chan []string) {
 	requestCh <- msg
 }
 
+// Receiver output responses from response channel
 func Receiver(responseCh chan map[string]string) {
 
 	response := <-responseCh
@@ -68,19 +69,26 @@ func Receiver(responseCh chan map[string]string) {
 
 	switch response["task"] {
 	case "add":
-		fmt.Printf(id+"%s + %s = %s\n", response["a"], response["b"], response["result"])
+		fmt.Printf(id+"%s + %s = %s\n",
+			response["a"], response["b"], response["result"])
 	case "sub":
-		fmt.Printf(id+"%s %s - %s = %s\n", response["a"], response["b"], response["result"])
+		fmt.Printf(id+"%s %s - %s = %s\n",
+			response["a"], response["b"], response["result"])
 	case "mult":
-		fmt.Printf(id+"%s %s * %s = %s\n", response["a"], response["b"], response["result"])
+		fmt.Printf(id+"%s %s * %s = %s\n",
+			response["a"], response["b"], response["result"])
 	case "div":
-		fmt.Printf(id+"%s %s / %s = %s\n", response["a"], response["b"], response["result"])
+		fmt.Printf(id+"%s %s / %s = %s\n",
+			response["a"], response["b"], response["result"])
 	case "fibonacci":
-		fmt.Printf(id+"%s Fibonacci(%s) = %s\n", response["n"], response["result"])
+		fmt.Printf(id+"%s Fibonacci(%s) = %s\n",
+			response["n"], response["result"])
 	case "reverse":
-		fmt.Printf(id+"%s Reverse: %s = %s\n", response["text"], response["result"])
+		fmt.Printf(id+"%s Reverse: %s = %s\n",
+			response["text"], response["result"])
 	case "encode":
-		fmt.Printf(id+"%s Encode: %s = %s\n", response["text"], response["result"])
+		fmt.Printf(id+"%s Encode: %s = %s\n",
+			response["text"], response["result"])
 	}
 }
 
@@ -128,6 +136,8 @@ func messenger() ([]string, error) {
 	}
 	return msg, nil
 }
+
+/// THE ASSEMBLERS
 
 // Assemble basic arithmetic operations requests.
 func arithmetic() ([]string, error) {
