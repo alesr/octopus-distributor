@@ -48,7 +48,7 @@ func TestNthFibonacci(t *testing.T) {
 	for _, test := range fibCases {
 		nthFibonacci(test.arg)
 		if test.arg["result"] != test.expected["result"] {
-			t.Errorf("failed to multiply %v. expected %s, got %s", test.arg, test.expected["result"], test.arg["result"])
+			t.Errorf("failed to calculate fibonacci %v. expected %s, got %s", test.arg, test.expected["result"], test.arg["result"])
 		}
 	}
 }

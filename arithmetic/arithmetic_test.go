@@ -9,10 +9,14 @@ var parseCases = []struct {
 	arg      []string
 	expected map[string]string
 }{
-	{[]string{"add", "1", "2", "0001"}, map[string]string{"id": "0001", "task": "add", "a": "1", "b": "2"}},
-	{[]string{"sub", "3", "4", "0002"}, map[string]string{"id": "0002", "task": "sub", "a": "3", "b": "4"}},
-	{[]string{"mult", "5", "6", "0003"}, map[string]string{"id": "0003", "task": "mult", "a": "5", "b": "6"}},
-	{[]string{"div", "7", "8", "0004"}, map[string]string{"id": "0004", "task": "div", "a": "7", "b": "8"}},
+	{[]string{"add", "1", "2", "0001"},
+		map[string]string{"id": "0001", "task": "add", "a": "1", "b": "2"}},
+	{[]string{"sub", "3", "4", "0002"},
+		map[string]string{"id": "0002", "task": "sub", "a": "3", "b": "4"}},
+	{[]string{"mult", "5", "6", "0003"},
+		map[string]string{"id": "0003", "task": "mult", "a": "5", "b": "6"}},
+	{[]string{"div", "7", "8", "0004"},
+		map[string]string{"id": "0004", "task": "div", "a": "7", "b": "8"}},
 }
 
 func TestParse(t *testing.T) {
@@ -28,10 +32,14 @@ func TestParse(t *testing.T) {
 var addCases = []struct {
 	arg, expected map[string]string
 }{
-	{map[string]string{"id": "0001", "task": "add", "a": "1", "b": "2"}, map[string]string{"id": "0001", "task": "add", "a": "1", "b": "2", "result": "3"}},
-	{map[string]string{"id": "0002", "task": "add", "a": "3", "b": "4"}, map[string]string{"id": "0002", "task": "add", "a": "3", "b": "4", "result": "7"}},
-	{map[string]string{"id": "0003", "task": "add", "a": "5", "b": "6"}, map[string]string{"id": "0003", "task": "add", "a": "5", "b": "6", "result": "11"}},
-	{map[string]string{"id": "0004", "task": "add", "a": "7", "b": "8"}, map[string]string{"id": "0004", "task": "add", "a": "7", "b": "8", "result": "15"}},
+	{map[string]string{"id": "0001", "task": "add", "a": "1", "b": "2"},
+		map[string]string{"id": "0001", "task": "add", "a": "1", "b": "2", "result": "3"}},
+	{map[string]string{"id": "0002", "task": "add", "a": "3", "b": "4"},
+		map[string]string{"id": "0002", "task": "add", "a": "3", "b": "4", "result": "7"}},
+	{map[string]string{"id": "0003", "task": "add", "a": "5", "b": "6"},
+		map[string]string{"id": "0003", "task": "add", "a": "5", "b": "6", "result": "11"}},
+	{map[string]string{"id": "0004", "task": "add", "a": "7", "b": "8"},
+		map[string]string{"id": "0004", "task": "add", "a": "7", "b": "8", "result": "15"}},
 }
 
 func TestAdd(t *testing.T) {
