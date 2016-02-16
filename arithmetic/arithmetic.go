@@ -22,7 +22,6 @@ func Exec(arithCh chan []string, resultCh chan map[string]string) {
 	case "div":
 		divide(arith)
 	}
-
 	resultCh <- arith
 }
 

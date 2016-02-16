@@ -4,11 +4,11 @@ package publisher
 To make things interesting we want a high volume of requests being sent
 to your queue manager a.k.a Octopus Distributor.
 
-For that, we need to simulate a client sending as many requests as possible.
-Meet, the Publisher package.
+For that, we need to simulate a client sending these requests.
 
 What the publisher package does is to group functions that help us to build
-four types of fake messages that going to work as requests to our queue.
+four types of fake messages that going to work as requests to our request channel
+which is works as our queue.
 
 The messages types are arithmetic, fibonacci, reverse and encode.
 
@@ -53,43 +53,55 @@ func init() {
 // by sending it over the request channel.
 func Sender(requestCh chan []string) {
 
-	msg, err := messenger()
-	if err != nil {
-		log.Fatal(err)
-	}
-	requestCh <- msg
+	go func(requestCh chan []string) {
+		for {
+			msg, err := messenger()
+			if err != nil {
+
+				// All package's errors coming here.
+				log.Fatal(err)
+			}
+			requestCh <- msg
+		}
+	}(requestCh)
 }
 
-// Receiver output responses from response channel
+// Receiver output responses from response channel.
 func Receiver(responseCh chan map[string]string) {
 
-	response := <-responseCh
+	// Until the end, get responses.
+	go func(responseCh chan map[string]string) {
+		for {
+			response := <-responseCh
 
-	id := fmt.Sprintf("id: %s ", response["id"])
+			id := fmt.Sprintf("id: %s ", response["id"])
 
-	switch response["task"] {
-	case "add":
-		fmt.Printf(id+"%s + %s = %s\n",
-			response["a"], response["b"], response["result"])
-	case "sub":
-		fmt.Printf(id+"%s %s - %s = %s\n",
-			response["a"], response["b"], response["result"])
-	case "mult":
-		fmt.Printf(id+"%s %s * %s = %s\n",
-			response["a"], response["b"], response["result"])
-	case "div":
-		fmt.Printf(id+"%s %s / %s = %s\n",
-			response["a"], response["b"], response["result"])
-	case "fibonacci":
-		fmt.Printf(id+"%s Fibonacci(%s) = %s\n",
-			response["n"], response["result"])
-	case "reverse":
-		fmt.Printf(id+"%s Reverse: %s = %s\n",
-			response["text"], response["result"])
-	case "encode":
-		fmt.Printf(id+"%s Encode: %s = %s\n",
-			response["text"], response["result"])
-	}
+			// As soon we get a response we must to decide how to present that.
+			switch response["task"] {
+			case "add":
+				fmt.Printf(id+"%s + %s = %s\n",
+					response["a"], response["b"], response["result"])
+			case "sub":
+				fmt.Printf(id+"%s %s - %s = %s\n",
+					response["a"], response["b"], response["result"])
+			case "mult":
+				fmt.Printf(id+"%s %s * %s = %s\n",
+					response["a"], response["b"], response["result"])
+			case "div":
+				fmt.Printf(id+"%s %s / %s = %s\n",
+					response["a"], response["b"], response["result"])
+			case "fibonacci":
+				fmt.Printf(id+"%s Fibonacci(%s) = %s\n",
+					response["n"], response["result"])
+			case "reverse":
+				fmt.Printf(id+"%s Reverse: %s = %s\n",
+					response["text"], response["result"])
+			case "encode":
+				fmt.Printf(id+"%s Encode: %s = %s\n",
+					response["text"], response["result"])
+			}
+		}
+	}(responseCh)
 }
 
 // Randomly choose a message type and call the proper function to build
@@ -110,7 +122,7 @@ func messenger() ([]string, error) {
 	var msg []string
 
 	// Depending on which task has been chosen,
-	// we call the corresponding constructor function.
+	// we call the corresponding assembler function.
 	switch taskList[index] {
 
 	case "arithmetic":

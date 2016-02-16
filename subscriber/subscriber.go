@@ -2,7 +2,6 @@ package subscriber
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/alesr/octopus-distributor/arithmetic"
 	"github.com/alesr/octopus-distributor/encode"
@@ -12,39 +11,41 @@ import (
 )
 
 var (
-	arithCh    = make(chan []string)
-	fibCh      = make(chan []string)
-	revCh      = make(chan []string)
-	encCh      = make(chan []string)
+	// Those channels are used to share data between the subscriber
+	// and the process responsible to solve the tasks
+	arithCh = make(chan []string)
+	fibCh   = make(chan []string)
+	revCh   = make(chan []string)
+	encCh   = make(chan []string)
+
+	// This channels communicate the results coming
+	// from the task solvers back to the subscriber.
 	resultCh   = make(chan map[string]string)
 	responseCh = make(chan map[string]string)
 )
 
-// Trigger the system to start receiving requests
+// Run trigger the system to start receiving requests
 func Run() {
+
+	// Since the programs starts here, let's make a channel to receive requests
 	requestCh := make(chan []string)
 
-	go func() {
-		for {
-			publisher.Sender(requestCh)
-		}
-	}()
+	// If you want to play with us you need to register your Sender here
+	publisher.Sender(requestCh)
 
-	// i will be our ID
-	for i := 1; i <= 10000; i++ {
+	for i := 1; i <= 100000; i++ {
 
 		select {
 		case request := <-requestCh:
 			request = append(request, strconv.Itoa(i))
 			distributor(request)
 		case result := <-resultCh:
-
-			go publisher.Receiver(responseCh)
+			publisher.Receiver(responseCh)
 			responseCh <- result
 		}
 	}
 
-	time.Sleep(time.Second * 1)
+	//time.Sleep(time.Second * 3)
 }
 
 // Distribute requests to respective channels.
