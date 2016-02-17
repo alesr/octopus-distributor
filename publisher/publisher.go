@@ -64,12 +64,8 @@ func Sender(requestCh chan []string) {
 	}
 }
 
-// Receiver output responses from response channel.
+// Receiver output responses
 func Receiver(response map[string]string) {
-
-	// Until the end, get responses.
-
-	// response := <-responseCh
 
 	// As soon we get a response we must to decide how to present that.
 	switch response["task"] {
