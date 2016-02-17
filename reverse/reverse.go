@@ -5,10 +5,8 @@ import "strings"
 func Exec(revCh chan []string, resultCh chan map[string]string) {
 
 	r := <-revCh
-
 	rev := parse(r)
 	reverseText(rev)
-
 	resultCh <- rev
 }
 

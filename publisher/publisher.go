@@ -53,55 +53,48 @@ func init() {
 // by sending it over the request channel.
 func Sender(requestCh chan []string) {
 
-	go func(requestCh chan []string) {
-		for {
-			msg, err := messenger()
-			if err != nil {
+	for {
+		msg, err := messenger()
+		if err != nil {
 
-				// All package's errors coming here.
-				log.Fatal(err)
-			}
-			requestCh <- msg
+			// All package's errors coming here.
+			log.Fatal(err)
 		}
-	}(requestCh)
+		requestCh <- msg
+	}
 }
 
 // Receiver output responses from response channel.
-func Receiver(responseCh chan map[string]string) {
+func Receiver(response map[string]string) {
 
 	// Until the end, get responses.
-	go func(responseCh chan map[string]string) {
-		for {
-			response := <-responseCh
 
-			id := fmt.Sprintf("id: %s ", response["id"])
+	// response := <-responseCh
 
-			// As soon we get a response we must to decide how to present that.
-			switch response["task"] {
-			case "add":
-				fmt.Printf(id+"%s + %s = %s\n",
-					response["a"], response["b"], response["result"])
-			case "sub":
-				fmt.Printf(id+"%s %s - %s = %s\n",
-					response["a"], response["b"], response["result"])
-			case "mult":
-				fmt.Printf(id+"%s %s * %s = %s\n",
-					response["a"], response["b"], response["result"])
-			case "div":
-				fmt.Printf(id+"%s %s / %s = %s\n",
-					response["a"], response["b"], response["result"])
-			case "fibonacci":
-				fmt.Printf(id+"%s Fibonacci(%s) = %s\n",
-					response["n"], response["result"])
-			case "reverse":
-				fmt.Printf(id+"%s Reverse: %s = %s\n",
-					response["text"], response["result"])
-			case "encode":
-				fmt.Printf(id+"%s Encode: %s = %s\n",
-					response["text"], response["result"])
-			}
-		}
-	}(responseCh)
+	// As soon we get a response we must to decide how to present that.
+	switch response["task"] {
+	case "add":
+		fmt.Printf("id: %s %s + %s = %s\n",
+			response["id"], response["a"], response["b"], response["result"])
+	case "sub":
+		fmt.Printf("id: %s %s - %s = %s\n",
+			response["id"], response["a"], response["b"], response["result"])
+	case "mult":
+		fmt.Printf("id: %s %s * %s = %s\n",
+			response["id"], response["a"], response["b"], response["result"])
+	case "div":
+		fmt.Printf("id: %s %s / %s = %s\n",
+			response["id"], response["a"], response["b"], response["result"])
+	case "fibonacci":
+		fmt.Printf("id: %s Fibonacci(%s) = %s\n",
+			response["id"], response["n"], response["result"])
+	case "reverse":
+		fmt.Printf("id: %s Reverse: %s = %s\n",
+			response["id"], response["text"], response["result"])
+	case "encode":
+		fmt.Printf("id: %s Encode: %s = %s\n",
+			response["id"], response["text"], response["result"])
+	}
 }
 
 // Randomly choose a message type and call the proper function to build

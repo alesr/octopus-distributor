@@ -1,7 +1,15 @@
 package main
 
-import "github.com/alesr/octopus-distributor/subscriber"
+import (
+	"runtime"
+
+	"github.com/alesr/octopus-distributor/subscriber"
+)
 
 func main() {
+
+	maxProcs := runtime.NumCPU()
+	runtime.GOMAXPROCS(maxProcs)
+
 	subscriber.Run()
 }
