@@ -2,6 +2,7 @@ package subscriber
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/alesr/octopus-distributor/arithmetic"
 	"github.com/alesr/octopus-distributor/encode"
@@ -33,18 +34,28 @@ func Run() {
 	// If you want to play with us you need to register your Sender here
 	go publisher.Sender(requestCh)
 
+	// Our request pool
 	for i := 1; i <= 1000; i++ {
 
+		// get request
 		request := <-requestCh
+
+		// add i as ID
 		request = append(request, strconv.Itoa(i))
+
+		// distribute
 		distributor(request)
 
+		// Everytime we get a result from the solvers we send it back to publisher.
 		go func() {
 			for {
 				publisher.Receiver(<-resultCh)
 			}
 		}()
 	}
+
+	// Waiting for goroutines to finish
+	time.Sleep(time.Second)
 }
 
 // Distribute requests to respective channels.
