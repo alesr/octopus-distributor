@@ -4,10 +4,12 @@ import "golang.org/x/crypto/bcrypt"
 
 func Exec(encCh chan []string, resultCh chan map[string]string) {
 
-	e := <-encCh
-	enc := parse(e)
-	encodeText(enc)
-	resultCh <- enc
+	for e := range encCh {
+		enc := parse(e)
+		encodeText(enc)
+		resultCh <- enc
+	}
+	close(encCh)
 }
 
 // Parse the request

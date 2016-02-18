@@ -4,10 +4,12 @@ import "strings"
 
 func Exec(revCh chan []string, resultCh chan map[string]string) {
 
-	r := <-revCh
-	rev := parse(r)
-	reverseText(rev)
-	resultCh <- rev
+	for r := range revCh {
+		rev := parse(r)
+		reverseText(rev)
+		resultCh <- rev
+	}
+	close(revCh)
 }
 
 // Parse the request

@@ -4,10 +4,12 @@ import "strconv"
 
 func Exec(fibCh chan []string, resultCh chan map[string]string) {
 
-	f := <-fibCh
-	fib := parse(f)
-	nthFibonacci(fib)
-	resultCh <- fib
+	for f := range fibCh {
+		fib := parse(f)
+		nthFibonacci(fib)
+		resultCh <- fib
+	}
+	close(fibCh)
 }
 
 // Parse the request

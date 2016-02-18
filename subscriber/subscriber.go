@@ -35,7 +35,7 @@ func Run() {
 	go publisher.Sender(requestCh)
 
 	// Our request pool
-	for i := 1; i <= 1000; i++ {
+	for i := 1; i <= 1000000; i++ {
 
 		// get request
 		request := <-requestCh
@@ -47,11 +47,7 @@ func Run() {
 		distributor(request)
 
 		// Everytime we get a result from the solvers we send it back to publisher.
-		go func() {
-			for {
-				publisher.Receiver(<-resultCh)
-			}
-		}()
+		publisher.Receiver(<-resultCh)
 	}
 
 	// Waiting for goroutines to finish
