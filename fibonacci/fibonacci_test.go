@@ -30,25 +30,19 @@ func TestParse(t *testing.T) {
 }
 
 var fibCases = []struct {
-	arg, expected map[string]string
+	arg, expected int
 }{
-	{map[string]string{"id": "0001", "task": "fibonacci", "n": "1"},
-		map[string]string{"id": "0001", "task": "fibonacci", "n": "1", "result": "1"}},
-	{map[string]string{"id": "0002", "task": "fibonacci", "n": "10"},
-		map[string]string{"id": "0002", "task": "fibonacci", "n": "10", "result": "55"}},
-	{map[string]string{"id": "0003", "task": "fibonacci", "n": "2"},
-		map[string]string{"id": "0003", "task": "fibonacci", "n": "2", "result": "1"}},
-	{map[string]string{"id": "0004", "task": "fibonacci", "n": "27"},
-		map[string]string{"id": "0004", "task": "fibonacci", "n": "27", "result": "196418"}},
-	{map[string]string{"id": "0004", "task": "fibonacci", "n": "0"},
-		map[string]string{"id": "0004", "task": "fibonacci", "n": "0", "result": "0"}},
+	{0, 0},
+	{1, 1},
+	{10, 55},
+	{27, 196418},
 }
 
 func TestNthFibonacci(t *testing.T) {
 	for _, test := range fibCases {
-		nthFibonacci(test.arg)
-		if test.arg["result"] != test.expected["result"] {
-			t.Errorf("failed to calculate fibonacci %v. expected %s, got %s", test.arg, test.expected["result"], test.arg["result"])
+		obs := nthFibonacci(test.arg)
+		if obs != test.expected {
+			t.Errorf("failed to calculate fibonacci %v. expected %s, got %s", test.arg, test.expected, obs)
 		}
 	}
 }

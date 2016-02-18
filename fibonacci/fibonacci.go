@@ -12,10 +12,13 @@ func Exec(request []string, resultCh chan map[string]string) {
 		return
 	}
 
+	if n < 0 {
+		fib["result"] = "n must be a positive number"
+		return
+	}
+
 	fib["result"] = strconv.Itoa(nthFibonacci(n))
-
 	resultCh <- fib
-
 }
 
 // Parse the request
