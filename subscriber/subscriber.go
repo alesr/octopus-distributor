@@ -30,18 +30,20 @@ func Run() {
 
 	// Since the programs starts here, let's make a channel to receive requests
 	requestCh := make(chan []string)
+	idCh := make(chan string)
 
 	// If you want to play with us you need to register your Sender here
 	go publisher.Sender(requestCh)
+	go makeID(idCh)
 
 	// Our request pool
-	for i := 1; i <= 1000000; i++ {
+	for i := 1; i <= 1000; i++ {
 
 		// get request
 		request := <-requestCh
 
 		// add i as ID
-		request = append(request, strconv.Itoa(i))
+		request = append(request, <-idCh)
 
 		// distribute
 		distributor(request)
@@ -52,6 +54,12 @@ func Run() {
 
 	// Waiting for goroutines to finish
 	time.Sleep(time.Second)
+}
+
+func makeID(idCh chan string) {
+	for i := 1; ; i++ {
+		idCh <- strconv.Itoa(i)
+	}
 }
 
 // Distribute requests to respective channels.
