@@ -57,7 +57,7 @@ After receiving the request the Subscriber checks if the task can be handled. An
 
 The four mentioned packages are the Arithmetic, Fibonacci, Reverse and Encode. Each one receives tasks through their own channel and giving back the resulting calculation through the result's channel.
 
-Once the Subscriber receives requests from the results channel it sends the result back to the Publisher via the response channel. The Receiver function can then get results from the channel and output the response putting an end to the cycle.
+Once the Subscriber receives requests from the results channel it sends the ordered results back to the Publisher. The Receiver function can then output the response putting an end to the cycle.
 
 #### Some important considerations in this process to justify my implementation for the test.
 
