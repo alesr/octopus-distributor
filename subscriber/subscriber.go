@@ -2,7 +2,6 @@ package subscriber
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/alesr/octopus-distributor/arithmetic"
 	"github.com/alesr/octopus-distributor/encode"
@@ -14,7 +13,7 @@ import (
 var resultCh = make(chan map[string]string)
 
 // Run trigger the system to start receiving requests
-func Run() {
+func Run(n int) {
 
 	// Since the program starts here, let's make a channel to receive requests.
 	// The buffer size is completely arbitrary, just prevents the sender from blocking too soon.
@@ -26,7 +25,7 @@ func Run() {
 	go makeID(idCh)
 
 	// Our request pool
-	for i := 1; i <= 5000000; i++ {
+	for i := 1; i <= n; i++ {
 
 		// DEBUG
 		//fmt.Println(runtime.NumGoroutine())
@@ -42,9 +41,6 @@ func Run() {
 		// Send the result back to the publisher
 		publisher.Receiver(<-resultCh)
 	}
-
-	// Waiting for goroutines to finish
-	time.Sleep(time.Second)
 }
 
 func makeID(idCh chan string) {
