@@ -38,11 +38,12 @@ cd octopus-distributor/
 go build
 ./octopus-distributor
 ```
+To set the number of requests to simulate.
 ```
-To set the number of requests to simulate
 ./octopus-distributor -request=10000
-
-To write requests on ./debug.out
+```
+To write requests on ./debug.out.
+```
 ./octopus-distributor -debug=true
 ```
 
