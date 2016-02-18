@@ -2,14 +2,13 @@ package reverse
 
 import "strings"
 
-func Exec(revCh chan []string, resultCh chan map[string]string) {
+func Exec(request []string, resultCh chan map[string]string) {
 
-	for r := range revCh {
-		rev := parse(r)
-		reverseText(rev)
-		resultCh <- rev
-	}
-	close(revCh)
+	rev := parse(request)
+	reverseText(rev)
+
+	// fmt.Println(rev)
+	resultCh <- rev
 }
 
 // Parse the request

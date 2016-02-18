@@ -11,25 +11,13 @@ import (
 	"github.com/alesr/octopus-distributor/reverse"
 )
 
-var (
-	// Those channels are used to share data between the subscriber
-	// and the process responsible to solve the tasks
-	arithCh = make(chan []string)
-	fibCh   = make(chan []string)
-	revCh   = make(chan []string)
-	encCh   = make(chan []string)
-
-	// This channels communicate the results coming
-	// from the task solvers back to the subscriber.
-	resultCh   = make(chan map[string]string)
-	responseCh = make(chan map[string]string)
-)
+var resultCh = make(chan map[string]string)
 
 // Run trigger the system to start receiving requests
 func Run() {
 
 	// Since the programs starts here, let's make a channel to receive requests
-	requestCh := make(chan []string)
+	requestCh := make(chan []string, 100)
 	idCh := make(chan string)
 
 	// If you want to play with us you need to register your Sender here
@@ -37,7 +25,10 @@ func Run() {
 	go makeID(idCh)
 
 	// Our request pool
-	for i := 1; i <= 1000; i++ {
+	for i := 1; i <= 5000000; i++ {
+
+		// DEBUG
+		//fmt.Println(runtime.NumGoroutine())
 
 		// get request
 		request := <-requestCh
@@ -45,11 +36,10 @@ func Run() {
 		// add i as ID
 		request = append(request, <-idCh)
 
-		// distribute
 		distributor(request)
 
-		// Everytime we get a result from the solvers we send it back to publisher.
 		publisher.Receiver(<-resultCh)
+
 	}
 
 	// Waiting for goroutines to finish
@@ -66,29 +56,22 @@ func makeID(idCh chan string) {
 // No waiting in line. Everybody gets its own goroutine!
 func distributor(request []string) {
 
-	switch request[0] {
-
-	case "sum":
-		go arithmetic.Exec(arithCh, resultCh)
-		arithCh <- request
-	case "sub":
-		go arithmetic.Exec(arithCh, resultCh)
-		arithCh <- request
-	case "mult":
-		go arithmetic.Exec(arithCh, resultCh)
-		arithCh <- request
-	case "div":
-		go arithmetic.Exec(arithCh, resultCh)
-		arithCh <- request
-	case "fibonacci":
-		go fibonacci.Exec(fibCh, resultCh)
-		fibCh <- request
-	case "reverse":
-		go reverse.Exec(revCh, resultCh)
-		revCh <- request
-	case "encode":
-		go encode.Exec(encCh, resultCh)
-		encCh <- request
-	}
-
+	go func() {
+		switch request[0] {
+		case "sum":
+			go arithmetic.Exec(request, resultCh)
+		case "sub":
+			go arithmetic.Exec(request, resultCh)
+		case "mult":
+			go arithmetic.Exec(request, resultCh)
+		case "div":
+			arithmetic.Exec(request, resultCh)
+		case "fibonacci":
+			go fibonacci.Exec(request, resultCh)
+		case "reverse":
+			go reverse.Exec(request, resultCh)
+		case "encode":
+			go encode.Exec(request, resultCh)
+		}
+	}()
 }

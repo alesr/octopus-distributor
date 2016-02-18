@@ -2,14 +2,14 @@ package encode
 
 import "golang.org/x/crypto/bcrypt"
 
-func Exec(encCh chan []string, resultCh chan map[string]string) {
+func Exec(request []string, resultCh chan map[string]string) {
 
-	for e := range encCh {
-		enc := parse(e)
-		encodeText(enc)
-		resultCh <- enc
-	}
-	close(encCh)
+	enc := parse(request)
+	encodeText(enc)
+
+	// fmt.Println(enc)
+
+	resultCh <- enc
 }
 
 // Parse the request

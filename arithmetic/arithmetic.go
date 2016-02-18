@@ -7,24 +7,22 @@ import (
 
 var errZeroDivError = errors.New("cannot divide by zero")
 
-func Exec(arithCh chan []string, resultCh chan map[string]string) {
+func Exec(request []string, resultCh chan map[string]string) {
 
-	for a := range arithCh {
-		arith := parse(a)
-
-		switch arith["task"] {
-		case "add":
-			add(arith)
-		case "sub":
-			subtract(arith)
-		case "mult":
-			multiply(arith)
-		case "div":
-			divide(arith)
-		}
-		resultCh <- arith
+	arith := parse(request)
+	switch arith["task"] {
+	case "add":
+		add(arith)
+	case "sub":
+		subtract(arith)
+	case "mult":
+		multiply(arith)
+	case "div":
+		divide(arith)
 	}
-	close(arithCh)
+
+	resultCh <- arith
+	// fmt.Println(arith)
 }
 
 // Parse the request
