@@ -1,5 +1,4 @@
 # octopus-distributor
-# octopus-distributor
 
 ### Project structure
 ```
