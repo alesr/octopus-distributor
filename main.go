@@ -1,7 +1,13 @@
 package main
 
-import "github.com/alesr/octopus-distributor/subscriber"
+import (
+	"runtime"
+
+	"github.com/alesr/octopus-distributor/subscriber"
+)
 
 func main() {
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	subscriber.Run()
 }
