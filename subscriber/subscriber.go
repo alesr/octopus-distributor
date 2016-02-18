@@ -1,6 +1,7 @@
 package subscriber
 
 import (
+	"os"
 	"strconv"
 
 	"github.com/alesr/octopus-distributor/arithmetic"
@@ -13,7 +14,14 @@ import (
 var resultCh = make(chan map[string]string)
 
 // Run trigger the system to start receiving requests
-func Run(n int) {
+func Run(n int, b bool) {
+
+	var file *os.File
+	if b {
+		file, _ = os.Create("debug.out")
+	}
+
+	defer file.Close()
 
 	// Since the program starts here, let's make a channel to receive requests.
 	// The buffer size is completely arbitrary, just prevents the sender from blocking too soon.
@@ -35,6 +43,15 @@ func Run(n int) {
 
 		// add i as ID
 		request = append(request, <-idCh)
+
+		if b {
+			for _, elem := range request {
+				file.WriteString(elem)
+				file.WriteString(" ")
+			}
+			file.WriteString("\n")
+			file.Sync()
+		}
 
 		distributor(request)
 
