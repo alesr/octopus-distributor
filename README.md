@@ -42,7 +42,7 @@ To set the number of requests to simulate.
 ```
 ./octopus-distributor -request=10000
 ```
-To write requests on ./debug.out.
+To write requests on debug.out under application root directory.
 ```
 ./octopus-distributor -debug=true
 ```
