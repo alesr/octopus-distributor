@@ -69,7 +69,7 @@ func Receiver(response map[string]string) {
 
 	// As soon we get a response we must to decide how to present that.
 	switch response["task"] {
-	case "add":
+	case "sum":
 		fmt.Printf("id: %s %s + %s = %s\n",
 			response["id"], response["a"], response["b"], response["result"])
 	case "sub":
@@ -149,7 +149,7 @@ func arithmetic() ([]string, error) {
 	b, _ := utilities.Random(maxValue)
 
 	// Now we select a random operation.
-	operationsList := []string{"add", "sub", "mult", "div"}
+	operationsList := []string{"sum", "sub", "mult", "div"}
 	index, err := utilities.Random(len(operationsList))
 	if err != nil {
 		return nil, err

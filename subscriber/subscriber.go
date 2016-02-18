@@ -68,7 +68,7 @@ func distributor(request []string) {
 
 	switch request[0] {
 
-	case "add":
+	case "sum":
 		go arithmetic.Exec(arithCh, resultCh)
 		arithCh <- request
 	case "sub":
