@@ -32,16 +32,20 @@
 
 ### How to run
 
-If you have Go installed:
 ```
 git clone github.com/alesr/octopus-distributor
 cd octopus-distributor/
-go run main.go
+go build
+./octopus-distributor
 ```
-If you have Docker:
 ```
-docker run -it --rm --name octopus alesr/octopus-distributor
+To set the number of requests to simulate
+./octopus-distributor -request=10000
+
+To write requests on ./debug.out
+./octopus-distributor -debug=true
 ```
+
 
 ### How it works
 
