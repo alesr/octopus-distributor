@@ -16,11 +16,12 @@ var resultCh = make(chan map[string]string)
 // Run trigger the system to start receiving requests
 func Run() {
 
-	// Since the programs starts here, let's make a channel to receive requests
+	// Since the program starts here, let's make a channel to receive requests.
+	// The buffer size is completely arbitrary, just prevents the sender from blocking too soon.
 	requestCh := make(chan []string, 100)
 	idCh := make(chan string)
 
-	// If you want to play with us you need to register your Sender here
+	// If you want to play with us you need to register your Sender here.
 	go publisher.Sender(requestCh)
 	go makeID(idCh)
 
@@ -38,8 +39,8 @@ func Run() {
 
 		distributor(request)
 
+		// Send the result back to the publisher
 		publisher.Receiver(<-resultCh)
-
 	}
 
 	// Waiting for goroutines to finish
@@ -53,7 +54,7 @@ func makeID(idCh chan string) {
 }
 
 // Distribute requests to respective channels.
-// No waiting in line. Everybody gets its own goroutine!
+// No waiting in line. Everybody gets its own goroutine.
 func distributor(request []string) {
 
 	go func() {
