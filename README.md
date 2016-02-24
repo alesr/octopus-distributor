@@ -35,6 +35,7 @@
 ```
 git clone https://github.com/alesr/octopus-distributor.git
 cd octopus-distributor/
+go get ./...
 go build
 ./octopus-distributor
 ```
