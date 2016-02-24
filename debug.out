@@ -1,10 +1,100 @@
-mult 495 665 1 
-reverse foo bar 2 
-div 585 249 3 
-reverse I'll make him an offer he can't refuse. 4 
-fibonacci 20 5 
-reverse The quick brown fox jumps over the lazy dog. 6 
-mult 6 398 7 
-fibonacci 17 8 
-div 571 193 9 
-mult 196 622 10 
+reverse I'll make him an offer he can't refuse. 1 
+reverse Get to the choppa! 2 
+encode The quick brown fox jumps over the lazy dog. 3 
+encode Hello, World 4 
+reverse Papa Americano 5 
+encode You're a disease - and I'm the cure. 6 
+sub 145 882 7 
+encode foo bar 8 
+sum 195 703 9 
+encode Go ahead. I don't shop here. 10 
+sub 664 90 11 
+div 867 783 12 
+reverse Go ahead. I don't shop here. 13 
+reverse Go ahead. I don't shop here. 14 
+encode You're a disease - and I'm the cure. 15 
+fibonacci 11 16 
+reverse Get to the choppa! 17 
+mult 479 279 18 
+encode Hello, World 19 
+mult 536 465 20 
+fibonacci 17 21 
+sub 25 400 22 
+sum 684 687 23 
+div 908 749 24 
+sum 318 938 25 
+reverse A Royale with cheese. 26 
+reverse Get to the choppa! 27 
+sub 929 582 28 
+sub 502 332 29 
+sub 922 655 30 
+div 868 892 31 
+encode You're a disease - and I'm the cure. 32 
+reverse Hello, World 33 
+mult 463 624 34 
+sum 453 704 35 
+sub 589 201 36 
+encode Get to the choppa! 37 
+fibonacci 29 38 
+encode Papa Americano 39 
+encode Hello, World 40 
+reverse You're a disease - and I'm the cure. 41 
+reverse Get to the choppa! 42 
+fibonacci 23 43 
+fibonacci 24 44 
+reverse foo bar 45 
+fibonacci 19 46 
+fibonacci 23 47 
+encode You're a disease - and I'm the cure. 48 
+mult 880 825 49 
+sum 850 531 50 
+div 692 429 51 
+encode You're a disease - and I'm the cure. 52 
+encode Papa Americano 53 
+sub 577 827 54 
+fibonacci 12 55 
+encode The quick brown fox jumps over the lazy dog. 56 
+reverse You shall not pass. 57 
+reverse Go ahead. I don't shop here. 58 
+fibonacci 0 59 
+fibonacci 7 60 
+encode Go ahead. I don't shop here. 61 
+reverse Lorem ipsum dolor sit amet. 62 
+encode Hello, World 63 
+fibonacci 2 64 
+fibonacci 6 65 
+sum 940 949 66 
+fibonacci 14 67 
+fibonacci 29 68 
+encode A Royale with cheese. 69 
+reverse I'll make him an offer he can't refuse. 70 
+fibonacci 15 71 
+fibonacci 23 72 
+fibonacci 20 73 
+encode A Royale with cheese. 74 
+encode foo bar 75 
+sub 355 433 76 
+fibonacci 23 77 
+fibonacci 11 78 
+encode Papa Americano 79 
+fibonacci 27 80 
+fibonacci 16 81 
+sum 920 245 82 
+fibonacci 29 83 
+reverse You're a disease - and I'm the cure. 84 
+fibonacci 14 85 
+sum 979 273 86 
+fibonacci 20 87 
+encode Lorem ipsum dolor sit amet. 88 
+encode A Royale with cheese. 89 
+sub 825 760 90 
+encode You shall not pass. 91 
+reverse Hello, World 92 
+reverse Papa Americano 93 
+sub 797 625 94 
+sum 675 529 95 
+fibonacci 8 96 
+mult 229 697 97 
+div 244 71 98 
+reverse You shall not pass. 99 
+div 499 537 100 
