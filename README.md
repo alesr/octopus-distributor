@@ -33,7 +33,7 @@
 ### How to run
 
 ```
-git clone github.com/alesr/octopus-distributor
+git clone https://github.com/alesr/octopus-distributor.git
 cd octopus-distributor/
 go build
 ./octopus-distributor
